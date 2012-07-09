@@ -6,43 +6,56 @@ import play.api.libs.EventSource
 
 import play.api.libs.iteratee._
 import play.api.libs.concurrent._
+import play.api.data._
+import play.api.data.Forms._
 
 import akka.util.Timeout
 import akka.util.duration._
 import akka.pattern.ask
 
-import actors.PersonActor
+import actors.ChatRooms
+import models._
 
 object Chat extends Controller {
+  import ChatRooms.Events._
   implicit val timeout = Timeout(5.seconds)
   
   def index = Action {
     AsyncResult {
-      (new AkkaFuture((PersonActor.ref ? PersonActor.AllChildren).mapTo[String])).asPromise.map { allChildren =>
-        Ok(views.html.index(allChildren))
+      (new AkkaFuture((ChatRooms.ref ? GetAllMessages).mapTo[String])).asPromise.map { allMessages =>
+        Ok(views.html.index(allMessages))
       }
     }
   }
 
   def join = Action {
     import play.api.libs.json._
-    def asJson: Enumeratee[String, JsValue] = Enumeratee.map { name =>
-      JsObject(Seq("name"->JsString(name)))
-    }
+    def asJson: Enumeratee[Message, JsValue] = Enumeratee.map { msg => Json.toJson(msg) }
+
     AsyncResult {
-      (new AkkaFuture((PersonActor.ref ? PersonActor.Join()).mapTo[Enumerator[String]])).asPromise.map { stream =>
-        Ok.feed(stream &> asJson ><> EventSource[JsValue]()).as(EVENT_STREAM)
+      (new AkkaFuture((ChatRooms.ref ? Join()).mapTo[Enumerator[Message]])).asPromise.map { message =>
+        Ok.feed(message &> asJson ><> EventSource[JsValue]()).as(EVENT_STREAM)
       }
     }
   }
 
+  // FIXME Useless?
   def quit = Action {
     Ok("You have been disconected")
   }
 
-  def newChild(name: String) = Action {
-    PersonActor.ref ! PersonActor.NewChild(name)
-    Ok("Child " + name + " born!")
+  def postMessage = Action { implicit request =>
+    Form(tuple(
+      "author" -> nonEmptyText,
+      "content" -> nonEmptyText
+    )).bindFromRequest.fold(
+      error => BadRequest,
+      { case (author, content) =>
+        Logger.info(author + " says " + content)
+        ChatRooms.ref ! Posted(Message(author, content))
+        Ok
+      }
+    )
   }
   
 }

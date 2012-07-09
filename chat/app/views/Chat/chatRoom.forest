@@ -1,0 +1,10 @@
+{chatRoom: ChatRoom}
+div
+  div class=messages
+    {for m <- chatRoom.messages}
+      {call message(m)}
+  div class=form
+    input type=text placeholder="Login" name=author
+    input type=text placeholder="Message" name=content
+    button type=button
+      | Send

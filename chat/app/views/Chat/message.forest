@@ -1,0 +1,6 @@
+{message: Message}
+div class=message
+  div class=author
+    | @{message.author}:
+  div class=content
+    | {message.content}

@@ -1,4 +1,0 @@
-{person: Person}
-ul id=children
-  {for c <- person.children}
-    {call child(c)}

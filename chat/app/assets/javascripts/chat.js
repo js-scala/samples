@@ -2,9 +2,14 @@
   var events = new EventSource('/join');
   events.onmessage = function (e) {
     console.log(e.data);
-    $('#children').prepend(Chat.child(JSON.parse(e.data).name));
+    $('.messages').prepend(Chat.message(JSON.parse(e.data)));
   };
   events.onerror = function (e) {
     console.log(e);
   };
+
+  $('.form button').click(function () {
+    $.post('/post', { author: $('[name=author]').val(), content: $('[name=content]').val() }); // TODO handle success/error
+    return false
+  });
 })();

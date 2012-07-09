@@ -19,7 +19,7 @@ object ApplicationBuild extends Build {
       scalacOptions ++= Seq("-deprecation", "-unchecked", "-Xexperimental", "-Yvirtualize"),
 
       sourceGenerators in Compile <+= (sourceDirectory in Compile, sourceManaged in Compile) map { (sourceDir, targetDir) =>
-        forest.compiler.Compiler.compile(sourceDir / "views" / "Chat", targetDir, Seq("models._"), Seq("PersonOps"))
+        forest.compiler.Compiler.compile(sourceDir / "views" / "Chat", targetDir, Seq("models._"), Seq("MessageOps", "ChatRoomOps"))
         (targetDir ** "*.scala").get.map(_.getAbsoluteFile)
       }
 
