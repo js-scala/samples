@@ -14,7 +14,7 @@ object ApplicationBuild extends Build {
 
     val main = PlayProject(appName, appVersion, appDependencies, mainLang = SCALA).settings(
 
-      resolvers ++= Seq(ScalaToolsSnapshots, Resolver.file("yop", file("/Users/julienrichard-foy/.ivy2/local"))(Resolver.ivyStylePatterns)),
+      resolvers += Resolver.url("ivy-local", url("file://" + Path.userHome + "/.ivy2/local"))(Resolver.ivyStylePatterns),
 
       scalacOptions ++= Seq("-deprecation", "-unchecked", "-Xexperimental", "-Yvirtualize"),
 
