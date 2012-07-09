@@ -14,22 +14,30 @@ import akka.pattern.ask
 import actors.PersonActor
 
 object Chat extends Controller {
+  implicit val timeout = Timeout(5.seconds)
   
   def index = Action {
-    Ok(views.html.index())
+    AsyncResult {
+      (new AkkaFuture((PersonActor.ref ? PersonActor.AllChildren).mapTo[String])).asPromise.map { allChildren =>
+        Ok(views.html.index(allChildren))
+      }
+    }
   }
 
   def join = Action {
+    import play.api.libs.json._
+    def asJson: Enumeratee[String, JsValue] = Enumeratee.map { name =>
+      JsObject(Seq("name"->JsString(name)))
+    }
     AsyncResult {
-      implicit val timeout = Timeout(5.seconds)
       (new AkkaFuture((PersonActor.ref ? PersonActor.Join()).mapTo[Enumerator[String]])).asPromise.map { stream =>
-        Ok.feed(stream &> EventSource[String]()).as(EVENT_STREAM)
+        Ok.feed(stream &> asJson ><> EventSource[JsValue]()).as(EVENT_STREAM)
       }
     }
   }
 
   def quit = Action {
-    Ok
+    Ok("You have been disconected")
   }
 
   def newChild(name: String) = Action {

@@ -10,25 +10,32 @@ import play.api.libs.concurrent._
 
 class ChatRooms extends Actor {
   import PersonActor._
+  import models._
 
   var members = List.empty[PushEnumerator[String]]
-  var children = List.empty[String]
+  var person = Person(Nil)
+  var allChildren = views.Chat.allChildren(person)
 
   override def receive = {
     case Join() => {
-      val stream = Enumerator.imperative[String]()
+      Logger.info("Someone joined the chat room")
+      lazy val stream: PushEnumerator[String] = Enumerator.imperative(onComplete = { self ! Quit(stream) })
       members = stream :: members
       sender ! stream
     }
-    case Quit() => {
-
+    case Quit(channel) => {
+      Logger.info("Someone left the chat room")
+      members = members filterNot (_ == channel)
     }
     case NewChild(name) => {
-      children = name :: children
-      println(members)
+      person = Person(name :: person.children)
+      allChildren = views.Chat.allChildren(person)
       for (member <- members) {
         member.push(name)
       }
+    }
+    case AllChildren => {
+      sender ! allChildren
     }
   }
 }
@@ -38,7 +45,8 @@ object PersonActor {
   sealed trait Event
   case class NewChild(name: String) extends Event
   case class Join() extends Event
-  case class Quit() extends Event
+  case class Quit(channel: PushEnumerator[String]) extends Event
+  case object AllChildren extends Event
 
   lazy val system = ActorSystem("Person")
   lazy val ref = system.actorOf(Props[ChatRooms])
