@@ -3,7 +3,7 @@ package controllers
 import play.api._
 import play.api.mvc._
 import play.api.libs.EventSource
-
+import play.api.libs.json.JsValue
 import play.api.libs.iteratee._
 import play.api.libs.concurrent._
 import play.api.data._
@@ -22,19 +22,16 @@ object Chat extends Controller {
   
   def index = Action {
     AsyncResult {
-      (new AkkaFuture((ChatRooms.ref ? GetAllMessages).mapTo[String])).asPromise.map { allMessages =>
+      ((ChatRooms.ref ? GetAllMessages).mapTo[String]).asPromise.map { allMessages =>
         Ok(views.html.index(allMessages))
       }
     }
   }
 
   def join = Action {
-    import play.api.libs.json._
-    def asJson: Enumeratee[Message, JsValue] = Enumeratee.map { msg => Json.toJson(msg) }
-
     AsyncResult {
-      (new AkkaFuture((ChatRooms.ref ? Join()).mapTo[Enumerator[Message]])).asPromise.map { message =>
-        Ok.feed(message &> asJson ><> EventSource[JsValue]()).as(EVENT_STREAM)
+      ((ChatRooms.ref ? Join()).mapTo[Enumerator[Message]]).asPromise.map { message =>
+        Ok.feed(message &> ToJson[Message] ><> EventSource[JsValue]()).as(EVENT_STREAM)
       }
     }
   }
