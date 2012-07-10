@@ -13,26 +13,28 @@ import models._
 class ChatRooms extends Actor {
   import ChatRooms.Events._
 
-  var members = List.empty[PushEnumerator[Message]]
+  var members = List.empty[(String, PushEnumerator[Message])] // (name, channel)
   var chatRoom = ChatRoom(Nil)
   var allMessages = views.Chat.chatRoom(chatRoom)
 
   override def receive = {
-    case Join() => {
-      Logger.info("Someone joined the chat room")
+    case Join(username) => {
       lazy val stream: PushEnumerator[Message] = Enumerator.imperative(onComplete = { self ! Quit(stream) })
-      members = stream :: members
+      members = (username -> stream) :: members
+      self ! Posted(Message("system", "“%s” joined the chat room".format(username)))
       sender ! stream
     }
     case Quit(channel) => {
-      Logger.info("Someone left the chat room")
-      members = members filterNot (_ == channel)
+      for (member <- members find (_._2 == channel)) {
+        members = members filterNot (_ == member)
+        self ! Posted(Message("system", "“%s” left the chat room".format(member._1)))
+      }
     }
     case Posted(message) => {
       chatRoom = ChatRoom(chatRoom.messages :+ message) // TODO Don’t use a List for appending
       allMessages = views.Chat.chatRoom(chatRoom)
-      for (member <- members) {
-        member.push(message)
+      for ((_, channel) <- members) {
+        channel.push(message)
       }
     }
     case GetAllMessages => {
@@ -46,7 +48,7 @@ object ChatRooms {
   sealed trait Event
   object Events {
     case class Posted(message: Message) extends Event
-    case class Join() extends Event
+    case class Join(username: String) extends Event
     case class Quit(channel: PushEnumerator[Message]) extends Event
     case object GetAllMessages extends Event
   }

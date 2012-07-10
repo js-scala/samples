@@ -30,7 +30,7 @@ trait Chat extends Controller with AuthenticationSupport { this: AuthenticationS
 
   def join = Authenticated { username => implicit request =>
     AsyncResult {
-      ((ChatRooms.ref ? Join()).mapTo[Enumerator[Message]]).asPromise.map { message =>
+      ((ChatRooms.ref ? Join(username)).mapTo[Enumerator[Message]]).asPromise.map { message =>
         Ok.feed(message &> ToJson[Message] ><> EventSource[JsValue]()).as(EVENT_STREAM)
       }
     }
