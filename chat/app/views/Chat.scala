@@ -15,6 +15,9 @@ object Chat extends ir.Chat with ForestPkgExp with FieldsExp with CompileScala {
       jsCodegen.emitModule(module[Chat], "Chat", new java.io.PrintWriter("public/javascripts/views.js"))
     }
 
-    lazy val chatRoom = compile((new Chat {}).chatRoom).asInstanceOf[ChatRoom => String]
+    private val irChat = new Chat {}
+    lazy val chatRoom = compile(irChat.chatRoom).asInstanceOf[ChatRoom => String]
+    lazy val login = compile((_: Exp[_]) => irChat.login()).asInstanceOf[Unit => String](())
+    lazy val connectedUser = compile(irChat.connectedUser).asInstanceOf[String => String]
 
 }

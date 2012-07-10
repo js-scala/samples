@@ -16,21 +16,38 @@ import akka.pattern.ask
 import actors.ChatRooms
 import models._
 
-trait Chat extends Controller with AuthenticationSupport { this: AuthenticationSettings =>
+object Chat extends Controller {
   import ChatRooms.Events._
   implicit val timeout = Timeout(5.seconds)
   
-  def index = Authenticated { username => implicit request =>
+  def index = Action { implicit request =>
     AsyncResult {
       ((ChatRooms.ref ? GetAllMessages).mapTo[String]).asPromise.map { allMessages =>
-        Ok(views.html.index(allMessages))
+        Ok(views.html.index(allMessages, authenticatedUser))
       }
     }
   }
 
-  def join = Authenticated { username => implicit request =>
+  def login(u: String) = Action { implicit request =>
+    Form("username" -> nonEmptyText).bindFromRequest.fold(
+      badForm => BadRequest,
+      username => {
+        ChatRooms.ref ? Join(username)
+        Ok.withSession(session + (USERNAME -> username))
+      }
+    )
+  }
+
+  def logout = Action { implicit request =>
+    for (username <- session.get(USERNAME)) {
+      ChatRooms.ref ? Quit(username)
+    }
+    Ok.withSession(session - USERNAME)
+  }
+
+  def messages = Authenticated { username => implicit request =>
     AsyncResult {
-      ((ChatRooms.ref ? Join(username)).mapTo[Enumerator[Message]]).asPromise.map { message =>
+      ((ChatRooms.ref ? OpenChannel).mapTo[Enumerator[Message]]).asPromise.map { message =>
         Ok.feed(message &> ToJson[Message] ><> EventSource[JsValue]()).as(EVENT_STREAM)
       }
     }
@@ -41,10 +58,25 @@ trait Chat extends Controller with AuthenticationSupport { this: AuthenticationS
       error => BadRequest,
       content => {
         Logger.info(username + " says " + content)
-        ChatRooms.ref ! Posted(Message(username, content))
+        ChatRooms.ref ! Post(Message(username, content))
         Ok
       }
     )
   }
-  
+
+  def authenticatedUser(implicit request: RequestHeader): Option[String] =
+    session.get(USERNAME)
+
+  def isAuthenticated(implicit request: RequestHeader) =
+    authenticatedUser.isDefined
+
+  def Authenticated(f: String => Request[_] => Result) = Action { implicit request =>
+    authenticatedUser match {
+      case Some(username) => f(username)(request)
+      case None => Forbidden
+    }
+  }
+
+  val USERNAME = "username"
+
 }

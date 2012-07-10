@@ -1,0 +1,6 @@
+{username: String}
+div class=form
+  input type=text placeholder="Message" name=content
+  | Connected as “{username}”.
+  button type=button
+    | Leave

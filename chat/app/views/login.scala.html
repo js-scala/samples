@@ -1,8 +1,0 @@
-@(form: Form[String])
-
-@layout {
-  @helper.form(routes.App.authenticate) {
-    <input type=text name=username placeholder="What’s your name?" value="@form("username").value" />
-    <input type=submit>
-  }
-}

@@ -3,8 +3,3 @@ div class=chatroom
   div class=messages
     {for m <- chatRoom.messages}
       {call message(m)}
-  div class=form
-    input type=text placeholder="Message" name=content
-  div
-    a href="/logout"
-      | Leave
