@@ -16,11 +16,11 @@ import akka.pattern.ask
 import actors.ChatRooms
 import models._
 
-object Chat extends Controller {
+trait Chat extends Controller with AuthenticationSupport { this: AuthenticationSettings =>
   import ChatRooms.Events._
   implicit val timeout = Timeout(5.seconds)
   
-  def index = Action { implicit request =>
+  def index = Authenticated { username => implicit request =>
     AsyncResult {
       ((ChatRooms.ref ? GetAllMessages).mapTo[String]).asPromise.map { allMessages =>
         Ok(views.html.index(allMessages))
@@ -28,7 +28,7 @@ object Chat extends Controller {
     }
   }
 
-  def join = Action {
+  def join = Authenticated { username => implicit request =>
     AsyncResult {
       ((ChatRooms.ref ? Join()).mapTo[Enumerator[Message]]).asPromise.map { message =>
         Ok.feed(message &> ToJson[Message] ><> EventSource[JsValue]()).as(EVENT_STREAM)
@@ -36,20 +36,12 @@ object Chat extends Controller {
     }
   }
 
-  // FIXME Useless?
-  def quit = Action {
-    Ok("You have been disconected")
-  }
-
-  def postMessage = Action { implicit request =>
-    Form(tuple(
-      "author" -> nonEmptyText,
-      "content" -> nonEmptyText
-    )).bindFromRequest.fold(
+  def postMessage = Authenticated { username => implicit request =>
+    Form("content" -> nonEmptyText).bindFromRequest.fold(
       error => BadRequest,
-      { case (author, content) =>
-        Logger.info(author + " says " + content)
-        ChatRooms.ref ! Posted(Message(author, content))
+      content => {
+        Logger.info(username + " says " + content)
+        ChatRooms.ref ! Posted(Message(username, content))
         Ok
       }
     )

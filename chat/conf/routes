@@ -1,9 +1,12 @@
 # Routes
 
-GET     /                           controllers.Chat.index
-GET     /join                       controllers.Chat.join
-GET     /quit                       controllers.Chat.quit
-POST    /post                       controllers.Chat.postMessage
+GET     /                           controllers.App.index
+GET     /join                       controllers.App.join
+POST    /post                       controllers.App.postMessage
+
+GET     /login                      controllers.App.login
+POST    /authenticate               controllers.App.authenticate
+GET     /logout                     controllers.App.logout
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

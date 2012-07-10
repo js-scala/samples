@@ -4,7 +4,7 @@ div
     {for m <- chatRoom.messages}
       {call message(m)}
   div class=form
-    input type=text placeholder="Login" name=author
     input type=text placeholder="Message" name=content
-    button type=button
-      | Send
+  div
+    a href="/logout"
+      | Leave

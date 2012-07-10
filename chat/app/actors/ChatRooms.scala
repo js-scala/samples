@@ -29,7 +29,7 @@ class ChatRooms extends Actor {
       members = members filterNot (_ == channel)
     }
     case Posted(message) => {
-      chatRoom = ChatRoom(message :: chatRoom.messages)
+      chatRoom = ChatRoom(chatRoom.messages :+ message) // TODO Don’t use a List for appending
       allMessages = views.Chat.chatRoom(chatRoom)
       for (member <- members) {
         member.push(message)
