@@ -20,7 +20,7 @@ object Chat extends Controller {
   import ChatRooms.Events._
   implicit val timeout = Timeout(5.seconds)
   
-  def index = Action {
+  def index = Action { implicit request =>
     AsyncResult {
       ((ChatRooms.ref ? GetAllMessages).mapTo[String]).asPromise.map { allMessages =>
         Ok(views.html.index(allMessages))

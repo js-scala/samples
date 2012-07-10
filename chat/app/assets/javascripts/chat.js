@@ -1,5 +1,5 @@
 (function () {
-  var events = new EventSource('/join');
+  var events = new EventSource(Routes.controllers.Chat.join().url);
   events.onmessage = function (e) {
     console.log(e.data);
     $('.messages').prepend(Chat.message(JSON.parse(e.data)));
@@ -9,7 +9,9 @@
   };
 
   $('.form button').click(function () {
-    $.post('/post', { author: $('[name=author]').val(), content: $('[name=content]').val() }); // TODO handle success/error
+    Routes.controllers.Chat.postMessage().ajax({
+      data: { author: $('[name=author]').val(), content: $('[name=content]').val() }
+    }); // TODO handle success/error
     return false
   });
 })();

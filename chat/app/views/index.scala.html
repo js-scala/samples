@@ -1,4 +1,4 @@
-@(messages: String)
+@(messages: String)(implicit r: RequestHeader)
 
 <!DOCTYPE html>
 <html>
@@ -6,11 +6,15 @@
         <title>Chat sample</title>
         <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
         <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
-        <script src="@routes.Assets.at("javascripts/jquery-1.7.1.min.js")" type="text/javascript"></script>
-        <script src="@routes.Assets.at("javascripts/views.js")" type="text/javascript"></script>
     </head>
     <body>
         @Html(messages)
+        @helper.javascriptRouter("Routes")(
+          routes.javascript.Chat.join,
+          routes.javascript.Chat.postMessage
+        )
+        <script src="@routes.Assets.at("javascripts/jquery-1.7.1.min.js")" type="text/javascript"></script>
+        <script src="@routes.Assets.at("javascripts/views.js")" type="text/javascript"></script>
         <script type="text/javascript" src="@routes.Assets.at("javascripts/chat.js")"></script>
     </body>
 </html>
