@@ -1,5 +1,5 @@
 {chatRoom: ChatRoom}
-div
+div class=chatroom
   div class=messages
     {for m <- chatRoom.messages}
       {call message(m)}

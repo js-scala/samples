@@ -1,0 +1,42 @@
+html {
+	background-color: #E0E4CC;
+}
+
+.chatroom {
+
+	margin: 0 auto;
+	max-width: 35em;
+	font-size: 1.2em;
+
+	.messages {
+		height: 25em;
+		overflow-y: auto;
+
+		.message {
+			margin: .3em;
+			padding: .2em;
+			background-color: #A7DBD8;
+			border-radius: 3px;
+
+			.author {
+				color: #888;
+				&::before {
+					content: '@';
+				}
+			}
+			.content {
+				font-family: serif;
+				padding-left: 1em;
+			}
+		}
+	}
+
+	.form {
+		padding: 1em;
+		input {
+			width: 100%;
+			border-radius: 3px;
+		}
+	}
+
+}

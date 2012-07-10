@@ -3,6 +3,8 @@
   events.onmessage = function (e) {
     console.log(e.data);
     $('.messages').append(Chat.message(JSON.parse(e.data)));
+    var ms = $('.messages')[0];
+    ms.scrollTop = ms.scrollHeight - ms.offsetHeight;
   };
   events.onerror = function (e) {
     console.log(e);
