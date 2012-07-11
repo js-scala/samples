@@ -1,11 +1,13 @@
 @(messages: String, maybeUsername: Option[String])(implicit r: RequestHeader)
 
 @layout {
-  @Html(messages)
-  @maybeUsername match {
-  	case Some(username) => { @Html(views.Chat.connectedUser(username)) }
-  	case None => { @Html(views.Chat.login) }
-  }
+  <div class="container">
+    @Html(messages)
+    @maybeUsername match {
+  	  case Some(username) => { @Html(views.Chat.connectedUser(username)) }
+      case None => { @Html(views.Chat.login) }
+    }
+  </div>
   @helper.javascriptRouter("Routes")(
     routes.javascript.Chat.login,
     routes.javascript.Chat.logout,

@@ -1,37 +1,75 @@
 html {
 	background-color: #E0E4CC;
+	height: 100%;
 }
 
-.chatroom {
+body {
+	height: 100%;
+	margin: 0;
+}
 
-	margin: 0 auto;
-	max-width: 35em;
-	font-size: 1.2em;
-
-	.messages {
-		height: 35em;
-		overflow-y: auto;
-
-		.message {
-			margin: .3em;
-			padding: .2em;
-			background-color: #A7DBD8;
-			border-radius: 3px;
-
-			.author {
-				color: #888;
-				&::before {
-					content: '@';
-				}
-			}
-			.content {
-				font-family: serif;
-				padding-left: 1em;
-			}
+@media all and (min-width: 480px) {
+	.container {
+		width: 35em;
+		font-size: 1.2em;
+		.form {
+			width: 35em;
 		}
 	}
+}
 
-	.form {
+@media all and (max-width: 480px) {
+	.container {
+		width: 480px;
+		.form {
+			width: 480px;
+		}
+	}
+}
+
+.container {
+
+	margin: 0 auto;
+	height: 100%;
+
+	.chatroom {
+
+		height: 100%;
+		padding-bottom: 5em;
+		box-sizing: border-box;
+
+		.messages {
+
+			overflow-y: auto;
+			height: 100%;
+
+			.message {
+				margin: .3em;
+				padding: .2em;
+				background-color: #A7DBD8;
+				border-radius: 3px;
+
+				.author {
+					color: #888;
+					&::before {
+						content: '@';
+					}
+				}
+				.content {
+					font-family: serif;
+					padding-left: 1em;
+				}
+			}
+		}
+
+	}
+
+	.form, .login {
+
+		box-sizing: border-box;
+		background-color: #E0E4CC;
+		position: fixed;
+		bottom: 0;
 		padding: 1em;
 		input {
 			width: 100%;

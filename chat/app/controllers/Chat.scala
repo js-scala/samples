@@ -48,7 +48,7 @@ object Chat extends Controller {
   def messages = Authenticated { username => implicit request =>
     AsyncResult {
       ((ChatRooms.ref ? OpenChannel).mapTo[Enumerator[Message]]).asPromise.map { message =>
-        Ok.feed(message &> ToJson[Message] ><> EventSource[JsValue]()).as(EVENT_STREAM)
+        Ok.feed(message &> ToJson[Message] ><> EventSource()).as(EVENT_STREAM)
       }
     }
   }
