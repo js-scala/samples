@@ -20,6 +20,6 @@ object Chat extends ChatUpdate with ForestPkgExp with TreeManipulationExp with F
     lazy val chatRoom = compile(irChat.chatRoom).asInstanceOf[ChatRoom => scala.xml.Node]
     lazy val login = compile((_: Exp[_]) => irChat.login()).asInstanceOf[Unit => scala.xml.Node](())
     lazy val connectedUser = compile(irChat.connectedUser).asInstanceOf[String => scala.xml.Node]
-    lazy val updateChatRoom = compile(irChat.updateChatRoom).asInstanceOf[((forest.lib.NodeRef, Message)) => Unit]
+    lazy val updateChatRoom = compile(irChat.updateChatRoom)
 
 }
