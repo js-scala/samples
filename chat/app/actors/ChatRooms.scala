@@ -9,6 +9,7 @@ import play.api.libs.iteratee._
 import play.api.libs.concurrent._
 
 import models._
+import forest.lib._
 
 class ChatRooms extends Actor {
   import ChatRooms.Events._
@@ -16,11 +17,11 @@ class ChatRooms extends Actor {
   var channels = List.empty[PushEnumerator[Message]] // readers connections
   var members = List.empty[String] // users chatting
   var chatRoom = ChatRoom(Nil)
-  var allMessages = views.Chat.chatRoom(chatRoom)
+  val chatRoomUi = new NodeRef(views.Chat.chatRoom(chatRoom))
 
   override def receive = {
     case GetAllMessages => {
-      sender ! allMessages
+      sender ! chatRoomUi.cell
     }
     case OpenChannel => {
       lazy val stream: PushEnumerator[Message] = Enumerator.imperative(onComplete = { self ! CloseChannel(stream) })
@@ -42,12 +43,13 @@ class ChatRooms extends Actor {
     }
     case Post(message) => {
       chatRoom = chatRoom.copy(chatRoom.messages :+ message) // TODO Don’t use a List for appending
-      allMessages = views.Chat.chatRoom(chatRoom)
+      views.Chat.updateChatRoom(chatRoomUi, message)
       for (channel <- channels) {
         channel.push(message)
       }
     }
   }
+
 }
 
 object ChatRooms {

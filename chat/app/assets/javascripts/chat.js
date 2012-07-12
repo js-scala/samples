@@ -2,8 +2,7 @@
   // --- Message stream
   var events = new EventSource(Routes.controllers.Chat.messages().url);
   events.onmessage = function (e) {
-    console.log(e.data);
-    $('.messages').append(Chat.message(JSON.parse(e.data)));
+    ChatUpdate.updateChatRoom({ '_1': $('.chatroom'), '_2': JSON.parse(e.data) });
     var ms = $('.messages')[0];
     ms.scrollTop = ms.scrollHeight - ms.offsetHeight;
   };

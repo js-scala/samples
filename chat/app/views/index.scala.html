@@ -1,11 +1,11 @@
-@(messages: String, maybeUsername: Option[String])(implicit r: RequestHeader)
+@(messages: scala.xml.NodeSeq, maybeUsername: Option[String])(implicit r: RequestHeader)
 
 @layout {
   <div class="container">
-    @Html(messages)
+    @messages
     @maybeUsername match {
-  	  case Some(username) => { @Html(views.Chat.connectedUser(username)) }
-      case None => { @Html(views.Chat.login) }
+  	  case Some(username) => { @views.Chat.connectedUser(username) }
+      case None => { @views.Chat.login }
     }
   </div>
   @helper.javascriptRouter("Routes")(
@@ -16,5 +16,6 @@
   )
   <script src="@routes.Assets.at("javascripts/jquery-1.7.1.min.js")" type="text/javascript"></script>
   <script src="@routes.Assets.at("javascripts/views.js")" type="text/javascript"></script>
+  <script src="@routes.Assets.at("javascripts/views2.js")" type="text/javascript"></script>
   <script type="text/javascript" src="@routes.Assets.at("javascripts/chat.js")"></script>
 }

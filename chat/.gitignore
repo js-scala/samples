@@ -6,3 +6,4 @@ tmp
 .history
 dist
 /public/javascripts/views.js
+/public/javascripts/views2.js

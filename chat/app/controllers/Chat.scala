@@ -22,7 +22,7 @@ object Chat extends Controller {
   
   def index = Action { implicit request =>
     AsyncResult {
-      ((ChatRooms.ref ? GetAllMessages).mapTo[String]).asPromise.map { allMessages =>
+      ((ChatRooms.ref ? GetAllMessages).mapTo[scala.xml.NodeSeq]).asPromise.map { allMessages =>
         Ok(views.html.index(allMessages, authenticatedUser))
       }
     }
@@ -57,7 +57,6 @@ object Chat extends Controller {
     Form("content" -> nonEmptyText).bindFromRequest.fold(
       error => BadRequest,
       content => {
-        Logger.info(username + " says " + content)
         ChatRooms.ref ! Post(Message(username, content))
         Ok
       }
