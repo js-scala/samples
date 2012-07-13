@@ -95,8 +95,7 @@ object Mice {
       c.fillStyle = mouse.color
       c.fillRect(x, y, 5, 5)
     }
-    override lazy val initialPen = unit(false)
-    override lazy val togglePen = fun { penDown: Rep[Boolean] => !penDown }
+    override lazy val initialPen = false
   }
 
   trait CursorProg extends MiceProg {
@@ -110,14 +109,12 @@ object Mice {
         })
       ()
     }
-    override lazy val initialPen = unit(true)
-    override lazy val togglePen = fun { penDown : Rep[Boolean] => penDown }
+    override lazy val initialPen = true
   }
 
   trait MiceProg extends JS with MiceApi with LiftVariables with Doms with JSDebug with Casts {
     val move: Rep[MoveLiteral => Unit]
-    val initialPen: Rep[Boolean]
-    val togglePen: Rep[Boolean => Boolean]
+    val initialPen: Boolean
     def main(): Rep[Unit] = {
       var penDown = initialPen
 
@@ -142,8 +139,10 @@ object Mice {
           move(data.asInstanceOf[Rep[MoveLiteral]])
       }
 
-      jQuery(document).click { (e: Rep[JQueryEvent]) =>
-        penDown = togglePen(penDown)
+      if (!initialPen) {
+        jQuery(document).click { (e: Rep[JQueryEvent]) =>
+          penDown = !penDown
+        }
       }
 
       jQuery(document).mousemove {
