@@ -4,7 +4,7 @@ import scala.virtualization.lms.common._
 import forest.lms._
 import models._
 
-object Chat extends ChatUpdate with ForestPkgExp with TreeManipulationExp with FieldsExp with CompileScala { Ir =>
+object Chat extends ChatUpdate with ForestXmlPkgExp with TreeManipulationExp with FieldsExp with CompileScala { Ir =>
 
   	compiler = null
   	context = Nil
@@ -17,9 +17,12 @@ object Chat extends ChatUpdate with ForestPkgExp with TreeManipulationExp with F
     }
 
     private val irChat = new ChatUpdate {}
-    lazy val chatRoom = compile(irChat.chatRoom).asInstanceOf[ChatRoom => scala.xml.Node]
-    lazy val login = compile((_: Exp[_]) => irChat.login()).asInstanceOf[Unit => scala.xml.Node](())
-    lazy val connectedUser = compile(irChat.connectedUser).asInstanceOf[String => scala.xml.Node]
+    lazy val chatRoom = compile(irChat.chatRoom)
+    lazy val login = {
+      val loginCompiled = compile((_: Exp[Unit]) => irChat.login())
+      loginCompiled(())
+    }
+    lazy val connectedUser = compile(irChat.connectedUser)
     lazy val updateChatRoom = compile(irChat.updateChatRoom)
 
 }
