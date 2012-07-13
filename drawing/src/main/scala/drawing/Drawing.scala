@@ -85,7 +85,7 @@ trait JSGenMiceApi extends JSGenProxy with JSGenLiteral {
 }
 
 object Mice {
-  trait MiceProg { this: JS with MiceApi with LiftVariables with Doms with JSDebug =>
+  trait MiceProg { this: JS with MiceApi with LiftVariables with Doms with JSDebug with Casts =>
     def main() {
       var penDown = false
       val move = fun { (mouse: Rep[MoveLiteral]) =>
@@ -141,7 +141,7 @@ object Mice {
   }
 
   def codegen(pw: PrintWriter) {
-    new MiceProg with JSExp with MiceApiExp with LiftVariables with DomsExp with JSDebugExp { self =>
+    new MiceProg with JSExp with MiceApiExp with LiftVariables with DomsExp with JSDebugExp with Casts { self =>
       val codegen = new JSGenOpt with JSGenMiceApi with GenDoms with JSGenDebug { val IR: self.type = self }
       codegen.emitSource0(main _, "main", pw)
     }
