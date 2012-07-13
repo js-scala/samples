@@ -85,18 +85,41 @@ trait JSGenMiceApi extends JSGenProxy with JSGenLiteral {
 }
 
 object Mice {
-  trait MiceProg { this: JS with MiceApi with LiftVariables with Doms with JSDebug with Casts =>
-    def main() {
-      var penDown = false
-      val move = fun { (mouse: Rep[MoveLiteral]) =>
-        val canvas = document.getElementById("canvas").as[Canvas]
-        val c = canvas.getContext("2d")
-        val x = (mouse.cx*6)/17
-        val y = (mouse.cy*4)/17
-        log(string_plus("(", string_plus(String.valueOf(x), string_plus(", ", string_plus(String.valueOf(y), ")")))))
-        c.fillStyle = mouse.color
-        c.fillRect(x, y, 5, 5)
-      }
+  trait DrawingProg extends MiceProg {
+    override lazy val move = fun { (mouse: Rep[MoveLiteral]) =>
+      val canvas = document.getElementById("canvas").as[Canvas]
+      val c = canvas.getContext("2d")
+      val x = (mouse.cx*6)/17
+      val y = (mouse.cy*4)/17
+      log(string_plus("(", string_plus(String.valueOf(x), string_plus(", ", string_plus(String.valueOf(y), ")")))))
+      c.fillStyle = mouse.color
+      c.fillRect(x, y, 5, 5)
+    }
+    override lazy val initialPen = unit(false)
+    override lazy val togglePen = fun { penDown: Rep[Boolean] => !penDown }
+  }
+
+  trait CursorProg extends MiceProg {
+    override lazy val move = fun { (mouse: Rep[MoveLiteral]) =>
+      if (jQuery("#mouse_"+mouse.id).length == 0)
+        jQuery("body").append("<span class='mouse' id='mouse_"+mouse.id+"'><span style='display:none;' class='chat'/></span>")
+      jQuery("#mouse_"+mouse.id).css(new JSLiteral {
+          val left = ((jQuery(window).width() - mouse.w) / 2 + mouse.cx) + "px"
+          val top = mouse.cy + "px"
+          val `background-color` = mouse.color
+        })
+      ()
+    }
+    override lazy val initialPen = unit(true)
+    override lazy val togglePen = fun { penDown : Rep[Boolean] => penDown }
+  }
+
+  trait MiceProg extends JS with MiceApi with LiftVariables with Doms with JSDebug with Casts {
+    val move: Rep[MoveLiteral => Unit]
+    val initialPen: Rep[Boolean]
+    val togglePen: Rep[Boolean => Boolean]
+    def main(): Rep[Unit] = {
+      var penDown = initialPen
 
       val ratelimit = fun { (ms: Rep[Int]) => fun { (fn: Rep[JQueryEvent => Any]) =>
           var last = currentTime()
@@ -120,7 +143,7 @@ object Mice {
       }
 
       jQuery(document).click { (e: Rep[JQueryEvent]) =>
-        penDown = !penDown
+        penDown = togglePen(penDown)
       }
 
       jQuery(document).mousemove {
@@ -137,17 +160,28 @@ object Mice {
           }
         }
       }
+
+      ()
     }
   }
 
-  def codegen(pw: PrintWriter) {
-    new MiceProg with JSExp with MiceApiExp with LiftVariables with DomsExp with JSDebugExp with Casts { self =>
+  trait MiceProgExp extends MiceProg with JSExp with MiceApiExp with LiftVariables with DomsExp with JSDebugExp with Casts
+
+  def codegenDrawing(pw: PrintWriter) {
+    new DrawingProg with MiceProgExp { self =>
       val codegen = new JSGenOpt with JSGenMiceApi with GenDoms with JSGenDebug { val IR: self.type = self }
       codegen.emitSource0(main _, "main", pw)
     }
   }
 
- def writeJs(filename: String) = {
+  def codegenCursor(pw: PrintWriter) {
+    new CursorProg with MiceProgExp { self =>
+      val codegen = new JSGenOpt with JSGenMiceApi with GenDoms with JSGenDebug { val IR: self.type = self }
+      codegen.emitSource0(main _, "main", pw)
+    }
+  }
+
+ def writeJs(filename: String, codegen: PrintWriter => Unit) = {
    val out = new PrintWriter(filename)
    codegen(out)
    out.close()
@@ -155,5 +189,6 @@ object Mice {
 }
 
 object Main extends App {
-  Mice.writeJs("src/main/webapp/mice_.js")
+  Mice.writeJs("src/main/webapp/drawing_.js", Mice.codegenDrawing)
+  Mice.writeJs("src/main/webapp/cursor_.js", Mice.codegenCursor)
 }
