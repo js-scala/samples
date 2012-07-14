@@ -1,0 +1,9 @@
+/* general style */
+body    { font: 18px/25px 'Palatino', 'Palatino Linotype', 'Georgia', serif; 
+          text-align: center; }
+a       { color: #432165; }
+a:hover { color: #3b185f; background: #f9f8fa; }
+
+/* headlines */
+h1, h2, h3, h4, h5, h6      { font-family: 'Vollkorn', 'Georgia', serif;
+                              font-weight: normal; color: #222; }
