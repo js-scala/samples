@@ -1,6 +1,6 @@
 package views
 
-import forest.lms._
+import forest._
 import models._
 
 trait ChatUpdate extends ir.Chat with TreeManipulation {

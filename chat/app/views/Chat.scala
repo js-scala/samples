@@ -1,7 +1,7 @@
 package views
 
 import scala.virtualization.lms.common._
-import forest.lms._
+import forest._
 import models._
 
 object Chat extends ChatUpdate with ForestXmlPkgExp with TreeManipulationExp with FieldsExp with CompileScala { Ir =>

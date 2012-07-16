@@ -1,7 +1,7 @@
 package models
 
 import scala.virtualization.lms.common.Base
-import forest.lms._
+import forest._
 import js._
 
 case class ChatRoom(messages: List[Message])
