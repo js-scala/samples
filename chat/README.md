@@ -9,8 +9,8 @@ Dependencies: [js-scala](http://github.com/js-scala/js-scala), [build-play20](ht
 * Check that all the dependencies are locally published
 * Run Play! virtualized
 * In the prompt, run the `aspects` sub project
-** `[chat] $ project aspects`
-** `> run`
+    * `[chat] $ project aspects`
+    * `> run`
 * Then run the `chat` project
-** `> project chat`
-** `[chat] $ run`
+    * `> project chat`
+    * `[chat] $ run`
