@@ -26,7 +26,7 @@
     // TODO Client side validation
     Routes.controllers.Chat.login(username).ajax({
       success: function () {
-        $('.login').replaceWith(Chat.connectedUser(username));
+        $('.login').replaceWith(Chat.connectedUser(username).root);
       },
       error: function () {
         alert('Unable to log in!'); // TODO distinguish between 4xx and 5xx errors
@@ -50,7 +50,7 @@
   $(document).on('click', '.form button', function () {
     Routes.controllers.Chat.logout().ajax({
       success: function () {
-        $('.form').replaceWith(Chat.login());
+        $('.form').replaceWith(Chat.login().root);
       }
     });
   });

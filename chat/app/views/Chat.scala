@@ -4,11 +4,11 @@ import scala.virtualization.lms.common._
 import forest._
 import models._
 
-object Chat extends ChatUpdate with ForestXmlPkgExp with TreeManipulationExp with FieldsExp with CompileScala { Ir =>
+object Chat extends ChatUpdate with ForestPkgExp with TreeManipulationExp with FieldsExp with CompileScala { Ir =>
 
   	compiler = null
   	context = Nil
-    override val codegen = new ScalaGenForestXmlPkg with ScalaGenTreeManipulation with ScalaGenFields with ScalaGenTupleOps { val IR: Ir.type = Ir; stream = null }
+    override val codegen = new ScalaGenForestPkg with ScalaGenTreeManipulation with ScalaGenFields with ScalaGenTupleOps { val IR: Ir.type = Ir; stream = null }
 
     def generateJs() {
       val jsCodegen = new JSGenForestPkg with JSGenTreeManipulation with JSGenFields { val IR: Ir.type = Ir; stream = null }

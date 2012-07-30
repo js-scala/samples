@@ -4,8 +4,8 @@
   <div class="container">
     @messages
     @maybeUsername match {
-  	  case Some(username) => { @views.Chat.connectedUser(username) }
-      case None => { @views.Chat.login }
+  	  case Some(username) => { @views.Chat.connectedUser(username)("root") }
+      case None => { @views.Chat.login("root") }
     }
   </div>
   @helper.javascriptRouter("Routes")(

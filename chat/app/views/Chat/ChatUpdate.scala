@@ -8,7 +8,7 @@ trait ChatUpdate extends ir.Chat with TreeManipulation {
     def updateChatRoom(p: Rep[(NodeRef, Message)]) {
       val (chatRoom, message) = (p._1, p._2)
       chatRoom.transform { n =>
-        n.find(".messages").append((new Chat {}).message(message))
+        n.find(".messages").append((new Chat {}).message(message).root)
       }
     }
   }

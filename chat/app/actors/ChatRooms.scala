@@ -17,7 +17,7 @@ class ChatRooms extends Actor {
   var channels = List.empty[PushEnumerator[Message]] // readers connections
   var members = List.empty[String] // users chatting
   var chatRoom = ChatRoom(Nil)
-  val chatRoomUi = new NodeRef(views.Chat.chatRoom(chatRoom))
+  val chatRoomUi = new NodeRef(views.Chat.chatRoom(chatRoom)("root"))
 
   override def receive = {
     case GetAllMessages => {

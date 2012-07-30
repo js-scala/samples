@@ -9,7 +9,7 @@ object ApplicationBuild extends Build {
 
 
     val appDependencies = Seq(
-      "forest" %% "forest" % "0.2-SNAPSHOT"
+      "forest" %% "forest" % "0.3-SNAPSHOT"
     )
 
     val main = PlayProject(appName, appVersion, appDependencies, mainLang = SCALA).settings(
