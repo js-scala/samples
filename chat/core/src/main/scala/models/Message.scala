@@ -1,5 +1,6 @@
 package models
 
+// TODO depend only on lms
 import scala.virtualization.lms.common.Base
 import forest._
 import js._

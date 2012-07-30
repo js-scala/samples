@@ -17,7 +17,7 @@ class ChatRooms extends Actor {
   var channels = List.empty[PushEnumerator[Message]] // readers connections
   var members = List.empty[String] // users chatting
   var chatRoom = ChatRoom(Nil)
-  val chatRoomUi = new NodeRef(views.Chat.chatRoom(chatRoom)("root"))
+  val chatRoomUi = new NodeRef(views.chatRoom(chatRoom)("root"))
 
   override def receive = {
     case GetAllMessages => {
@@ -43,7 +43,7 @@ class ChatRooms extends Actor {
     }
     case Post(message) => {
       chatRoom = chatRoom.copy(chatRoom.messages :+ message) // TODO Don’t use a List for appending
-      views.Chat.updateChatRoom(chatRoomUi, message)
+      updates.updateChatRoom(chatRoomUi, message)
       for (channel <- channels) {
         channel.push(message)
       }

@@ -9,20 +9,18 @@ object ApplicationBuild extends Build {
 
 
     val appDependencies = Seq(
-      "forest" %% "forest" % "0.3-SNAPSHOT"
+      
     )
+
+    val core = Project(id = "core", base = file("core"))
+    val aspects = Project(id = "aspects", base = file("aspects")).dependsOn(core)
 
     val main = PlayProject(appName, appVersion, appDependencies, mainLang = SCALA).settings(
 
       resolvers += Resolver.url("ivy-local", url("file://" + Path.userHome + "/.ivy2/local"))(Resolver.ivyStylePatterns),
 
-      scalacOptions ++= Seq("-deprecation", "-unchecked", "-Xexperimental", "-Yvirtualize"),
+      scalacOptions ++= Seq("-deprecation", "-unchecked", "-Xexperimental", "-Yvirtualize")
 
-      sourceGenerators in Compile <+= (sourceDirectory in Compile, sourceManaged in Compile) map { (sourceDir, targetDir) =>
-        forest.compiler.Compiler.compile(scalax.file.Path(sourceDir / "views" / "Chat"), scalax.file.Path(targetDir), Seq("models._"), Seq("MessageOps", "ChatRoomOps"))
-        (targetDir ** "*.scala").get.map(_.getAbsoluteFile)
-      }
-
-    )
+    ).dependsOn(core)
 
 }

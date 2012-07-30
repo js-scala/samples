@@ -2,7 +2,7 @@
   // --- Message stream
   var events = new EventSource(Routes.controllers.Chat.messages().url);
   events.onmessage = function (e) {
-    ChatUpdate.updateChatRoom({ '_1': $('.chatroom'), '_2': JSON.parse(e.data) });
+    Chat.updates.updateChatRoom({ '_1': $('.chatroom'), '_2': JSON.parse(e.data) });
     var ms = $('.messages')[0];
     ms.scrollTop = ms.scrollHeight - ms.offsetHeight;
   };
@@ -26,7 +26,7 @@
     // TODO Client side validation
     Routes.controllers.Chat.login(username).ajax({
       success: function () {
-        $('.login').replaceWith(Chat.connectedUser(username).root);
+        $('.login').replaceWith(Chat.views.connectedUser(username).root);
       },
       error: function () {
         alert('Unable to log in!'); // TODO distinguish between 4xx and 5xx errors
@@ -50,7 +50,7 @@
   $(document).on('click', '.form button', function () {
     Routes.controllers.Chat.logout().ajax({
       success: function () {
-        $('.form').replaceWith(Chat.login().root);
+        $('.form').replaceWith(Chat.views.login().root);
       }
     });
   });
