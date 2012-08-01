@@ -1,0 +1,14 @@
+.cache
+.classpath
+.project
+.settings
+.target
+bin
+logs
+project/project
+project/target
+target
+tmp
+.history
+dist
+*~
