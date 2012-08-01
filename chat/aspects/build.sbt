@@ -1,7 +1,7 @@
 name := "chat-aspects"
 
 libraryDependencies ++= Seq(
-  "forest" %% "forest" % "0.3-SNAPSHOT"
+  "js-scala" %% "forest" % "0.3-SNAPSHOT"
 )
 
 sourceGenerators in Compile <+= (sourceDirectory in Compile, sourceManaged in Compile) map { (sourceDir, targetDir) =>

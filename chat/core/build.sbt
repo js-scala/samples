@@ -1,7 +1,7 @@
 name := "chat-core"
 
 libraryDependencies ++= Seq(
-  "forest" %% "forest" % "0.3-SNAPSHOT",
+  "js-scala" %% "forest" % "0.3-SNAPSHOT",
   "play" %% "play" % "2.0-SNAPSHOT"
 )
 
