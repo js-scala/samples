@@ -22,13 +22,13 @@ object DrawingBoard {
     drawingBoardActor
   }
 
-  def join(drawing: String):Promise[(Iteratee[JsValue,_],Enumerator[JsValue])] = {
-    (default ? Join(drawing)).asPromise.map {      
+  def join(name: String, mode: String):Promise[(Iteratee[JsValue,_],Enumerator[JsValue])] = {
+    (default ? Join(name, mode)).asPromise.map {
       case Connected(id, enumerator) => 
         val iteratee = Iteratee.foreach[JsValue] { event =>
-          default ! ClientAction(drawing, id, event)
+          default ! ClientAction(name, id, event)
         }.mapDone { _ =>
-          default ! Quit(drawing, id)
+          default ! Quit(name, id)
         }
         (iteratee,enumerator)
     }
@@ -38,27 +38,38 @@ object DrawingBoard {
 class DrawingBoard extends Actor {
   var count = 0
   var members = Map.empty[Int,PushEnumerator[JsValue]]
+  var messages = List.empty[JsValue]
   val colors =  IndexedSeq("red", "blue", "yellow", "green", "purple", "orange")
-  
+
   def receive = {
-    case Join(drawing) => {
-      val channel =  Enumerator.imperative[JsValue]()
+    case Join(name, mode) => {
       val id = count
       count += 1
+      val channel =  mode match {
+        case "goto" =>
+          Enumerator.imperative[JsValue]()
+        case "replay" =>
+          Enumerator.imperative[JsValue](onStart = self ! Playback(name, id))
+      }
       members = members + (id -> channel)
       sender ! Connected(id, channel)
     }
-    case ClientAction(drawing, id, js) => {
-      notifyAll(drawing, id, js)
+    case Playback(name, id) => {
+      members.get(id).foreach { channel =>
+        messages.reverse.foreach(channel.push)
+      }
     }
-    case Quit(drawing, id) => {
+    case ClientAction(name, id, js) => {
+      notifyAll(name, id, js)
+    }
+    case Quit(name, id) => {
       members = members - id
     }
   }
 
   def pickColor(id: Int) = colors(id % colors.length)
 
-  def notifyAll(drawing: String, id: Int, js: JsValue) {
+  def notifyAll(name: String, id: Int, js: JsValue) {
     val msg = (js \ "action").as[String] match {
       case "move" => Some(JsObject(Seq(
         "action" -> JsString("move"),
@@ -74,6 +85,7 @@ class DrawingBoard extends Actor {
     msg match {
       case None => Logger("debug").info("Received unknown message: " + js.toString)
       case Some(msg) => {
+        messages = msg :: messages
         members.foreach { 
           case (_, channel) => channel.push(msg)
         }        
@@ -82,7 +94,8 @@ class DrawingBoard extends Actor {
   }  
 }
 
-case class Join(drawing: String)
-case class Quit(drawing: String, id: Int)
-case class ClientAction(drawing: String, id: Int, js: JsValue)
+case class Join(name: String, mode: String)
+case class Playback(name: String, id: Int)
+case class Quit(name: String, id: Int)
+case class ClientAction(name: String, id: Int, js: JsValue)
 case class Connected(id: Int, enumerator:Enumerator[JsValue])

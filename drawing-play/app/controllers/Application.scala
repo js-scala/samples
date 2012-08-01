@@ -17,8 +17,15 @@ object Application extends Controller {
     Ok(views.html.index())
   }
 
-  def drawing(drawingName: String) = WebSocket.async[JsValue] { request  =>
-    DrawingBoard.join(drawingName)
+  def drawing(name: String) = Action { implicit request =>
+    Ok(views.html.drawing(name))
   }
 
+  def cursor(name: String) = Action { implicit request =>
+    Ok(views.html.cursor(name)(views.html.empty()))
+  }
+
+  def socket(name: String, mode: String) = WebSocket.async[JsValue] { request  =>
+    DrawingBoard.join(name, mode)
+  }
 }

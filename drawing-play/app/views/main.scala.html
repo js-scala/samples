@@ -1,22 +1,23 @@
-@(title: String)(name: String)(content: Html)(implicit request: RequestHeader)
+@(title: String)(name: String, mode: String)(precontent: Html)(postcontent: Html)(implicit request: RequestHeader)
 
 <!DOCTYPE html>
 
 <html>
     <head>
-        <title>@title</title>
+        <title>drawing-play! -- @title</title>
         <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
         <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/mice.css")">
         <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
         <script src="@routes.Assets.at("javascripts/jquery-1.7.1.min.js")" type="text/javascript"></script>
     </head>
     <body onLoad="main();">
+      @precontent
       <script type="text/javascript">
         function createSocket() {
           var WS = window['MozWebSocket'] ? MozWebSocket : WebSocket
-          return new WS("@routes.Application.drawing(name).webSocketURL()")
+          return new WS("@routes.Application.socket(name, mode).webSocketURL()")
         }
       </script>
-        @content
+      @postcontent
     </body>
 </html>

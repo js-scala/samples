@@ -1,3 +1,30 @@
 @()(implicit request: RequestHeader)
 
-@cursor("index")
+@cursor("index") {
+<div id="blurb">
+<h1>Welcome to <em>drawing-play</em>!</h1>
+
+<p>This <a href="https://github.com/js-scala/samples/tree/master/drawing-play">sample
+application</a> showcases a minimal Play 2! collaborative drawing
+application using websockets. The JavaScript is generated
+with <a href="http://github.com/js-scala/js-scala">js.scala</a>.</p>
+
+<p>This page is in <em>cursor</em> mode. You see your own cursor (and
+possibly others) floating around. You can access a separate board in
+cusor mode, with the
+URL <code>/cursor/<em>&lt;name&gt;</em></code>. For
+example, <code><a href="/cursor/index">/cursor/index</a></code>.
+</p>
+
+<p>The server keeps track of all the cursor moves on each
+board. In <em>drawing</em> mode, you can see a playback of all the
+moves. In addition, to make it easier to draw in this mode, you must
+click to put the pen down, and re-click to put it back up. Try it out
+at <code><a href="/drawing/test">/drawing/test</a></code>. Of course,
+the drawing mode is likely to be particularly messy for the index
+board. Check it out
+at <code><a href="/drawing/index">/drawing/index</a></code>. Create or
+modify your own board with the
+URL <code>/drawing/<em>&lt;name&gt;</em></code>.</p>
+</div>
+}
