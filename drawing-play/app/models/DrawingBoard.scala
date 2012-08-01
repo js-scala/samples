@@ -18,7 +18,7 @@ object DrawingBoard {
   implicit val timeout = Timeout(1 second)
   
   lazy val default = {
-    val drawingBoardActor = Akka.system.actorOf(Props[DrawingBoard])
+    val drawingBoardActor = Akka.system.actorOf(Props[DrawingBoardActor])
     drawingBoardActor
   }
 
@@ -35,35 +35,48 @@ object DrawingBoard {
   }
 }
 
-class DrawingBoard extends Actor {
+class DrawingBoard(val name: String) {
   var count = 0
   var members = Map.empty[Int,PushEnumerator[JsValue]]
   var messages = List.empty[JsValue]
+}
+
+class DrawingBoardActor extends Actor {
+  var boards = Map.empty[String,DrawingBoard]
   val colors =  IndexedSeq("red", "blue", "yellow", "green", "purple", "orange")
 
   def receive = {
     case Join(name, mode) => {
-      val id = count
-      count += 1
+      val board = boards.get(name) match {
+        case None =>
+          val b = new DrawingBoard(name)
+          boards = boards + (name -> b)
+          b
+        case Some(b) => b
+      }
+      val id = board.count
+      board.count += 1
       val channel =  mode match {
         case "goto" =>
           Enumerator.imperative[JsValue]()
         case "replay" =>
           Enumerator.imperative[JsValue](onStart = self ! Playback(name, id))
       }
-      members = members + (id -> channel)
+      board.members = board.members + (id -> channel)
       sender ! Connected(id, channel)
     }
     case Playback(name, id) => {
-      members.get(id).foreach { channel =>
-        messages.reverse.foreach(channel.push)
+      val board = boards(name)
+      board.members.get(id).foreach { channel =>
+        board.messages.reverse.foreach(channel.push)
       }
     }
     case ClientAction(name, id, js) => {
       notifyAll(name, id, js)
     }
     case Quit(name, id) => {
-      members = members - id
+      val board = boards(name)
+      board.members = board.members - id
     }
   }
 
@@ -82,13 +95,14 @@ class DrawingBoard extends Actor {
       )))
       case _ => None
     }
+    val board = boards(name)
     msg match {
       case None => Logger("debug").info("Received unknown message: " + js.toString)
       case Some(msg) => {
-        messages = msg :: messages
-        members.foreach { 
+        board.messages = msg :: board.messages
+        board.members.foreach {
           case (_, channel) => channel.push(msg)
-        }        
+        }
       }
     }
   }  
