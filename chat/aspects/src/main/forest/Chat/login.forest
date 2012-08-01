@@ -1,5 +1,4 @@
 {}
 div class=login
+  | Join the chat room:
   input type=text placeholder="What’s your name?"
-  button type=button
-    | Join the chat room!

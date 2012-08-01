@@ -1,6 +1,6 @@
 {username: String}
 div class=form
-  input type=text placeholder="Message" name=content
+  input type=text placeholder="Write a message and hit 'Enter'" name=content
   | Connected as “{username}”.
   button type=button
     | Leave

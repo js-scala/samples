@@ -18,9 +18,6 @@
       login($('.login input').val());
     }
   });
-  $(document).on('click', '.login button', function (e) {
-    login($('.login input').val());
-  });
 
   var login = function (username) {
     // TODO Client side validation
