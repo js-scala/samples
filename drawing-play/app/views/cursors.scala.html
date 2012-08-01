@@ -1,0 +1,5 @@
+@(name: String)(implicit request: RequestHeader)
+
+@main("cursors -- " + name)(name) {
+<script src="@routes.Assets.at("javascripts/cursor_.js")" type="text/javascript"></script>
+}

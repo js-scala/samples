@@ -1,4 +1,4 @@
-@(title: String)(content: Html)
+@(title: String)(name: String)(content: Html)(implicit request: RequestHeader)
 
 <!DOCTYPE html>
 
@@ -10,7 +10,13 @@
         <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
         <script src="@routes.Assets.at("javascripts/jquery-1.7.1.min.js")" type="text/javascript"></script>
     </head>
-    <body>
+    <body onLoad="main();">
+      <script type="text/javascript">
+        function createSocket() {
+          var WS = window['MozWebSocket'] ? MozWebSocket : WebSocket
+          return new WS("@routes.Application.drawing(name).webSocketURL()")
+        }
+      </script>
         @content
     </body>
 </html>
