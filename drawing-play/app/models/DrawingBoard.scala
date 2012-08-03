@@ -39,6 +39,8 @@ object DrawingBoard {
 }
 
 class DrawingBoard(val name: String) extends Actor {
+  val filename = "drawings/" + name + ".json"
+
   private var count = 0
   private var members = Map.empty[Int,PushEnumerator[JsValue]]
   private var messages = List.empty[JsValue]
@@ -66,6 +68,22 @@ class DrawingBoard(val name: String) extends Actor {
     }
     case Quit(id) => {
       members = members - id
+      self ! SaveBoard
+    }
+    case LoadBoard => {
+      val f = new java.io.File(filename)
+      if (f.exists) {
+        Logger.info("Loading " + name)
+        val js = Json.parse(io.Source.fromFile(f).mkString)
+        messages = messages ::: js.as[Array[JsValue]].toList
+      }
+    }
+    case SaveBoard => {
+      Logger.info("Saving " + name)
+      val out = new java.io.PrintWriter(filename)
+      try {
+        out.println(JsArray(messages).toString())
+      } finally { out.close() }
     }
   }
 
@@ -102,6 +120,7 @@ class DrawingBoardSupervisor extends Actor {
       val board = boards.get(name) match {
         case None =>
           val b = context.actorOf(Props(new DrawingBoard(name)))
+          b ! LoadBoard
           boards = boards + (name -> b)
           b
         case Some(b) => b
@@ -112,7 +131,11 @@ class DrawingBoardSupervisor extends Actor {
 }
 
 case class Join(name: String, mode: String)
+
 case class JoinBoard(client: ActorRef, mode: String)
+case object SaveBoard
+case object LoadBoard
+
 case class Playback(id: Int)
 case class Quit(id: Int)
 case class ClientAction(id: Int, js: JsValue)
