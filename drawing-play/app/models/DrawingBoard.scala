@@ -83,7 +83,7 @@ class DrawingBoard(val name: String) extends Actor {
       case _ => None
     }
     msg match {
-      case None => Logger("debug").info("Received unknown message: " + js.toString)
+      case None => Logger.info("Received unknown message: " + js.toString)
       case Some(msg) => {
         messages = msg :: messages
         members.foreach {
