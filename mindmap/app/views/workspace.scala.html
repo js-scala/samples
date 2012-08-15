@@ -1,0 +1,73 @@
+@(id: String, vs: ViewSettings, action: String)(content: Html)(scripts: Html)(implicit r: RequestHeader)
+
+@main {
+  <div class="header">
+    <span class="logo"><a href="@routes.Application.index()">MindMap</a></span>
+    @*<span class="toolbar">
+      <button type=button title="Zoom In" class="zoom-in"></button>
+      <button type=button title="Zoom Out" class="zoom-out"></button>
+    </span>*@
+  </div>
+  <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+    <g class="workspace" transform="scale(@vs.s.map(_ / 100.0).getOrElse(1)) translate(@vs.x.getOrElse(0) @vs.y.getOrElse(0))">
+      @content
+    </g>
+  </svg>
+  @helper.javascriptRouter("Routes")(
+    routes.javascript.Application.seofriendly,
+    routes.javascript.Application.serverfriendly,
+    routes.javascript.Application.show
+  )
+  <script>
+    // To be replaced with a Scala implementation
+    (function () {
+      var state = { s: @vs.s.getOrElse(100), x: @vs.x.getOrElse(0), y: @vs.y.getOrElse(0) };
+      var workspace = document.querySelector('.workspace');
+
+      var updateTransform = function () {
+        workspace.setAttribute('transform', 'scale(' + (state.s / 100) + ') translate(' + state.x + ' ' + state.y + ')')
+        history.replaceState(state, '', Routes.controllers.Application.@{action}('@id', state).url);
+      };
+      window.addEventListener('popstate', function (e) {
+        if (e.state) {
+          state = e.state;
+          updateTransform();
+        }
+      });
+
+      // Zoom
+      document.querySelector('svg').addEventListener('mousewheel', function (e) {
+        var newScale = Math.round(state.s + e.wheelDeltaY / 16);
+        if (newScale > 0) {
+          state.x = Math.round(state.x - e.offsetX * 100 / state.s + e.offsetX * 100 / newScale);
+          state.y = Math.round(state.y - e.offsetY * 100 / state.s + e.offsetY * 100 / newScale);
+          state.s = newScale;
+          updateTransform();
+        }
+      });
+      // Move
+      (function () {
+        var moving = false, x, y;
+        window.addEventListener('mousedown', function (e) {
+          if (e.target.tagName == 'svg') {
+            moving = true;
+            x = e.x;
+            y = e.y;
+          }
+        });
+        window.addEventListener('mousemove', function (e) {
+          if (moving) {
+            state.x = Math.round(state.x + (e.x - x) * 100 / state.s);
+            state.y = Math.round(state.y + (e.y - y) * 100 / state.s);
+            x = e.x;
+            y = e.y;
+            updateTransform();
+          }
+        });
+        window.addEventListener('mouseup', function (e) { moving = false; });
+      })();
+
+    })();
+  </script>
+  @scripts
+}

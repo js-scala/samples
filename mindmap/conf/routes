@@ -1,0 +1,10 @@
+GET     /assets/*file               controllers.Assets.at(path="/public", file)
+
+GET     /                           controllers.Application.index()
+POST    /                           controllers.Application.create()
+GET     /:id                        controllers.Application.show(id: String, vs: ViewSettings)
+GET     /:id/control                controllers.Application.update(id: String)
+
+GET     /experiment1/:id            controllers.Application.seofriendly(id: String, vs: ViewSettings)
+GET     /experiment2/:id            controllers.Application.serverfriendly(id: String, vs: ViewSettings)
+# GET    /v3                         controllers.Application.seoAndServerfriendly()

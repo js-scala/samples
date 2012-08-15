@@ -1,0 +1,75 @@
+@font-face {
+  font-family: 'IconicStroke';
+  src: url('/assets/fonts/iconic_stroke.eot');
+  src: url('/assets/fonts/iconic_stroke.eot?#iefix') format('embedded-opentype'), url('/assets/fonts/iconic_stroke.ttf') format('truetype'), url('/assets/fonts/iconic_stroke.svg#iconic') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+body {
+  margin: 0
+}
+
+.vertex {
+
+  rect {
+    fill: whitesmoke;
+    stroke: #555;
+    stroke-width: 1px;
+    pointer-events: all;
+  }
+  p {
+    font-family: helvetica, sans-serif;
+    padding: 3px;
+    overflow-y: auto;
+    text-align: center;
+  }
+
+  &:hover {
+    cursor: pointer;
+
+    rect {
+      stroke-width: 2px;
+      fill: #fcfcfc;
+    }
+  }
+}
+
+.edge {
+  line {
+    stroke-width: 2px;
+    stroke: black;
+
+    &:hover {
+      stroke-width: 3px;
+      cursor: pointer;
+    }
+  }
+}
+
+svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: -1;
+  cursor: move;
+}
+
+.header {
+
+  background-color: rgba(200, 200, 200, 0.8);
+  padding: 3px;
+
+  > .logo {
+    margin: 1em;
+  }
+
+  > .toolbar > button {
+    font-family: 'IconicStroke';
+
+    &.zoom-in:after { content:'\2795'; }
+    &.zoom-out:after { content:'\2796'; }
+  }
+}
