@@ -1,8 +1,8 @@
-@(id: String, vs: ViewSettings, action: String)(content: Html)(scripts: Html)(implicit r: RequestHeader)
+@(id: String, vs: ViewSettings, ctl: String, indexUrl: String)(content: Html)(scripts: Html)(implicit r: RequestHeader)
 
 @main {
   <div class="header">
-    <span class="logo"><a href="@routes.Application.index()">MindMap</a></span>
+    <span class="logo"><a href="@indexUrl">MindMap</a></span>
     @*<span class="toolbar">
       <button type=button title="Zoom In" class="zoom-in"></button>
       <button type=button title="Zoom Out" class="zoom-out"></button>
@@ -14,9 +14,12 @@
     </g>
   </svg>
   @helper.javascriptRouter("Routes")(
-    routes.javascript.Application.seofriendly,
-    routes.javascript.Application.serverfriendly,
-    routes.javascript.Application.show
+    routes.javascript.V1.index,
+    routes.javascript.V1.show,
+    routes.javascript.V2.index,
+    routes.javascript.V2.show,
+    routes.javascript.V3.index,
+    routes.javascript.V3.show
   )
   <script>
     // To be replaced with a Scala implementation
@@ -26,7 +29,7 @@
 
       var updateTransform = function () {
         workspace.setAttribute('transform', 'scale(' + (state.s / 100) + ') translate(' + state.x + ' ' + state.y + ')')
-        history.replaceState(state, '', Routes.controllers.Application.@{action}('@id', state).url);
+        history.replaceState(state, '', Routes.controllers.@{ctl}.show('@id', state).url);
       };
       window.addEventListener('popstate', function (e) {
         if (e.state) {

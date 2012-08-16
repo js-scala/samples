@@ -1,8 +1,8 @@
-@(maps: Iterable[MindMapR], v: String)
+@(maps: Iterable[MindMapR])
 
 @main {
 
-	@views.listMaps(maps.toList, v)
+	@views.listMaps(maps.toList, "v1")
 
   <script type="text/javascript">
     document.querySelector('input').addEventListener('keyup', function (e) {

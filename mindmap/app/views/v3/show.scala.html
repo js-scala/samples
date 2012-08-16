@@ -1,0 +1,20 @@
+@(id: String, map: MindMap, vs: ViewSettings)(implicit r: RequestHeader)
+
+@import play.api.libs.json.Json
+@import play.api.Play.current
+@import models.repr.mindMapWrites
+
+@workspace(id, vs, "V3", routes.V3.index().url) {
+  
+} {
+  <script src="@routes.Assets.at("javascripts/mindmap-generated.min.js")"></script>
+  <script>
+    (function () {
+      var nodes = MindMap.showMap(MindMap.buildMap(@Html(play.api.cache.Cache.getOrElse("map_"+id+"_json", 60 * 60)(Json.toJson(map)).toString)));
+      var workspace = document.querySelector('svg .workspace');
+      for (var i = 0, l = nodes.length; i < l ; i++) {
+        workspace.appendChild(nodes[i]);
+      }
+    })();
+  </script>
+}

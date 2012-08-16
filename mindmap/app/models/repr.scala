@@ -8,10 +8,16 @@ import controllers.{Render, ViewSettings}
 
 object repr {
 
-  implicit def renderMindMap(implicit r: RequestHeader, vs: ViewSettings): Render[MindMapR] = Render[MindMapR](
-    "text/html" -> { map: MindMapR => views.html.show(map.id, map.content, vs, "show") },
-    "application/json" -> { map: MindMapR => Cache.getOrElse("map_"+map.id+"_json", 60 * 60)(Json.toJson[MindMap](map.content)) }
-  )
+  implicit val mindMapRWrites: Writes[Iterable[MindMapR]] = new Writes[Iterable[MindMapR]] {
+    def writes(ms: Iterable[MindMapR]): JsValue = JsArray(for (m <- ms.toSeq) yield {
+      JsObject(Seq(
+        "id" -> JsString(m.id),
+        "content" -> JsObject(Seq(
+          "name" -> JsString(m.content.name)
+        ))
+      ))
+    })
+  }
 
   // TODO Generate this
   implicit val mindMapWrites: Writes[MindMap] = new Writes[MindMap] {

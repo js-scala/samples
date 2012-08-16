@@ -1,13 +1,13 @@
-@(id: String, vs: ViewSettings, action: String)(implicit r: RequestHeader)
+@(id: String, vs: ViewSettings)(implicit r: RequestHeader)
 
-@workspace(id, vs, action) {
+@workspace(id, vs, "V2", routes.V2.index().url) {
 
 } {
   <script src="@routes.Assets.at("javascripts/ajax.min.js")"></script>
   <script src="@routes.Assets.at("javascripts/mindmap-generated.min.js")"></script>
   <script>
     (function () {
-      Ajax.getJSON('@routes.Application.show(id, ViewSettings(None, None, None))', function (data) {
+      Ajax.getJSON('@routes.V2.show(id, ViewSettings(None, None, None))', function (data) {
           var nodes = MindMap.showMap(MindMap.buildMap(data))
           var workspace = document.querySelector('svg .workspace');
           for (var i = 0, l = nodes.length; i < l ; i++) {

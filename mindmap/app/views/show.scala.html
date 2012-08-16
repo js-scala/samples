@@ -1,9 +1,0 @@
-@(id: String, map: MindMap, vs: ViewSettings, action: String)(implicit r: RequestHeader)
-
-@import play.api.Play.current
-
-@workspace(id, vs, action) {
-	@play.api.cache.Cache.getOrElse("map_"+id+"_html", 60 * 60)(views.showMap(map))
-} {
-
-}

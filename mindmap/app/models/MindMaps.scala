@@ -27,4 +27,15 @@ object MindMaps {
     i +: gs
   }
 
+
+  import concurrent.stm.Ref
+
+  val ref = Ref(MindMaps()).single
+
+  def commit(e: Event) {
+    ref.transform(_.apply(e))
+  }
+
+  init.foreach(commit)
+
 }
