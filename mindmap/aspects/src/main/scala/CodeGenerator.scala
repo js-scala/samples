@@ -46,7 +46,6 @@ object CodeGenerator extends App {
   val jsGen2 = new JSGen with JSGenListOps with JSGenStruct {
     val IR: jsProg.type = jsProg; stream = null
     import IR._
-    def emitSource[A : Manifest](args: List[Sym[_]], body: Block[A], name: String, out: java.io.PrintWriter) = emitSourceAnyArity(args, body, name, out)
   }
   val jsOut = new java.io.PrintWriter("app/assets/javascripts/mindmap-generated.js")
   jsOut.println(";window.MindMap = (function (m) {")
