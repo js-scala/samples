@@ -8,7 +8,7 @@ object ApplicationBuild extends Build {
     val appVersion      = "1.0-SNAPSHOT"
 
     val appDependencies = Seq(
-      
+      "batik" % "batik-transcoder" % "1.6-1"
     )
 
     val core = Project(id = "core", base = file("core"))

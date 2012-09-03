@@ -3,7 +3,7 @@ package controllers
 import play.api.mvc._
 import models._
 
-object V3 extends Controller {
+class V3 extends Workspace with Controller {
 
   def index = Action {
     Ok(views.html.v3.index(MindMaps.ref().all))

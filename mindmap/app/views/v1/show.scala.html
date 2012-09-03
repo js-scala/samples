@@ -2,7 +2,7 @@
 
 @import play.api.Play.current
 
-@workspace(id, vs, "V1", routes.V1.index().url) {
+@workspace(id, vs) {
   @play.api.cache.Cache.getOrElse("map_"+id+"_html", 60 * 60)(views.showMap(map))
 } {
 

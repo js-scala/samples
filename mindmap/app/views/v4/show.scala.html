@@ -1,0 +1,8 @@
+@(map: String)(implicit r: RequestHeader)
+
+@main {
+  <div class="header">
+    <span class="logo"><a href="@routes.Application.index">MindMap</a></span>
+  </div>
+  <img src="data:image/png;base64,@map">
+}

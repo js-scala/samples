@@ -20,11 +20,13 @@ object MindMaps {
   val freshId = () => java.util.UUID.randomUUID().toString
 
   val init: Seq[Event] = {
-    val hello = Vertex("Hello World!", 30, 30, 100, 25)
-    val yo = Vertex("42", 40, 100, 30, 25)
-    val i = Inserted("hello", MindMap("Hello", List(hello, yo), List(Edge(hello, yo))))
-    val gs = for (map <- data.generated) yield Inserted(freshId(), map)
-    i +: gs
+    val flexibility = Vertex("Flexibility allows for procrastination", 100, 100, 260, 25)
+    val procrastination = Vertex("Procrastination improves agility", 400, 175, 230, 25)
+    val agility = Vertex("Agility gives more flexibility", 275, 300, 200, 25)
+    val agilityMap = MindMap("Agility", List(flexibility, procrastination, agility), List(Edge(flexibility, procrastination), Edge(procrastination, agility), Edge(agility, flexibility)))
+    val patternsMap = data.generated.last
+    //val gs = for (map <- data.generated) yield Inserted(freshId(), map)
+    Seq(Inserted("agility", agilityMap), Inserted("design-patterns", patternsMap))
   }
 
 

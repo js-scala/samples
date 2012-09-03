@@ -7,7 +7,7 @@ import play.api.Play.current
 import models._
 import models.repr._
 
-object V2 extends Controller with RenderSupport {
+class V2 extends Workspace with Controller with RenderSupport {
 
   def index = Action { implicit request =>
     render(MindMaps.ref().all)

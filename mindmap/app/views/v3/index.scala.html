@@ -8,7 +8,7 @@
 @main {
   <script src="@routes.Assets.at("javascripts/mindmap-generated.min.js")"></script>
   <script type="text/javascript">
-    document.body.appendChild(MindMap.listMaps(@Html(Cache.getOrElse("maps_json", 60 * 60)(Json.toJson(maps)).toString), 'v3'));
+    document.body.appendChild(MindMap.listMaps(@Html(Cache.getOrElse("maps_json", 60 * 60)(Json.toJson(maps)).toString)));
     document.querySelector('input').addEventListener('keyup', function (e) {
       if (e.keyCode == 13) {
         alert('Not yet ^^');

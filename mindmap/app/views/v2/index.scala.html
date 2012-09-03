@@ -4,8 +4,8 @@
   <script src="@routes.Assets.at("javascripts/ajax.min.js")"></script>
   <script src="@routes.Assets.at("javascripts/mindmap-generated.min.js")"></script>
   <script type="text/javascript">
-    Ajax.getJSON('@routes.V2.index()', function (maps) {
-      document.body.appendChild(MindMap.listMaps(maps, 'v2'));
+    Ajax.getJSON('@routes.Application.index()', function (maps) {
+      document.body.appendChild(MindMap.listMaps(maps));
     });
     document.querySelector('input').addEventListener('keyup', function (e) {
       if (e.keyCode == 13) {

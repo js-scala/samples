@@ -1,4 +1,4 @@
-{map: MindMapR, ctl: String}
+{map: MindMapR}
 li
-  a href="/{ctl}/{map.id}"
+  a href="/{map.id}"
     | {map.content.name}

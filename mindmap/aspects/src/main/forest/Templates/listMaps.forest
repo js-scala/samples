@@ -1,8 +1,8 @@
-{maps: List[MindMapR], ctl: String}
-div
+{maps: List[MindMapR]}
+div class="list-maps"
   ul
     {for map <- maps}
-      {call itemMap(map, ctl)}
+      {call itemMap(map)}
   p
     | Create a 
     strong
