@@ -18,6 +18,7 @@
     routes.javascript.Application.show
   )
   <script src="@routes.Assets.at("javascripts/mindmap-generated.js")"></script>
+  @scripts
   <script>
     MindMap.setupExploration(@vs.s.getOrElse(100), @vs.x.getOrElse(0), @vs.y.getOrElse(0), function (s, x, y) {
       return Routes.controllers.Application.show('@id', { s: s, x: x, y: y }).url
@@ -73,5 +74,4 @@
     })();
     */
   </script>
-  @scripts
 }
