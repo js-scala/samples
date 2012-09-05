@@ -136,5 +136,149 @@ var x12 = {'name' : x10,'vertices' : x11,'edges' : x9};
 return x12
 }
 ;
+m['setupExploration'] = function(x0, x1, x2, x3) {
+var x4 = document.querySelector(".workspace");
+var x6 = document.querySelector("svg");
+if (x4 !== null) {
+var x5 = x4;
+var x11 = function(x12,x13,x14) {
+var x17 = x14;
+var x16 = x13;
+var x15 = x12;
+var x18 = x15 / 100.0;
+var x19 = "scale("+x18;
+var x20 = x19+") translate(";
+var x21 = x20+x16;
+var x22 = x21+" ";
+var x23 = x22+x17;
+var x24 = x23+")";
+var x25 = x5.setAttribute("transform", x24);
+var x28 = x3(x15,x16,x17);
+var x26 = {'s' : x15,'tx' : x16,'ty' : x17};
+var x29 = history.replaceState(x26, "", x28);
+return x29
+}
+if (x6 !== null) {
+var x7 = x6;
+var x8 = x0;
+var x9 = x1;
+var x10 = x2;
+var x48 = window.addEventListener('popstate', function (x31) {
+var x32 = x31.state;
+if (x32 !== null) {
+var x33 = x32;
+var x34 = x33.s;
+x8 = x34
+var x36 = x33.tx;
+x9 = x36
+var x38 = x33.ty;
+x10 = x38
+var x40 = x8;
+var x41 = x9;
+var x42 = x10;
+var x44 = x11(x40,x41,x42);
+}
+var x46 = undefined;
+}, false);
+var x83 = x7.addEventListener('mousewheel', function (x49) {
+var x50 = x8;
+var x51 = x49.wheelDeltaY;
+var x52 = x51 / 16.0;
+var x53 = x50 + x52;
+var x54 = Math.round(x53);
+var x55 = x54 > 0.0;
+var x81
+if (x55) {
+var x56 = x9;
+var x57 = x49.offsetX;
+var x58 = x57 * 100.0;
+var x59 = x58 / x50;
+var x60 = x56 - x59;
+var x61 = x58 / x54;
+var x62 = x60 + x61;
+var x63 = Math.round(x62);
+x9 = x63
+var x65 = x10;
+var x66 = x49.offsetY;
+var x67 = x66 * 100.0;
+var x68 = x67 / x50;
+var x69 = x65 - x68;
+var x70 = x67 / x54;
+var x71 = x69 + x70;
+var x72 = Math.round(x71);
+x10 = x72
+x8 = x54
+var x75 = x8;
+var x76 = x9;
+var x77 = x10;
+var x79 = x11(x75,x76,x77);
+x81=x79
+} else {
+x81=undefined
+}
+}, false);
+var x84 = false;
+var x85 = 0.0;
+var x86 = 0.0;
+var x100 = window.addEventListener('mousedown', function (x87) {
+var x88 = x87.target;
+var x89 = x88;
+var x90 = x89.tagName;
+var x91 = x90=="svg";
+var x98
+if (x91) {
+x84 = true
+var x93 = x87.offsetX;
+x85 = x93
+var x95 = x87.offsetY;
+x86 = x95
+x98=undefined
+} else {
+x98=undefined
+}
+}, false);
+var x131 = window.addEventListener('mousemove', function (x101) {
+var x102 = x84;
+var x129
+if (x102) {
+var x103 = x9;
+var x105 = x85;
+var x108 = x8;
+var x104 = x101.offsetX;
+var x106 = x104 - x105;
+var x107 = x106 * 100.0;
+var x109 = x107 / x108;
+var x110 = x103 + x109;
+var x111 = Math.round(x110);
+x9 = x111
+var x113 = x10;
+var x115 = x86;
+var x114 = x101.offsetY;
+var x116 = x114 - x115;
+var x117 = x116 * 100.0;
+var x118 = x117 / x108;
+var x119 = x113 + x118;
+var x120 = Math.round(x119);
+x10 = x120
+x85 = x104
+x86 = x114
+var x124 = x9;
+var x125 = x10;
+var x127 = x11(x108,x124,x125);
+x129=x127
+} else {
+x129=undefined
+}
+}, false);
+var x135 = window.addEventListener('mouseup', function (x132) {
+x84 = false
+}, false);
+}
+var x137 = undefined;
+}
+var x139 = undefined;
+return x139
+}
+;
 return m
 })(window.MindMap || {});

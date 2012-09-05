@@ -17,8 +17,12 @@
     routes.javascript.Application.index,
     routes.javascript.Application.show
   )
+  <script src="@routes.Assets.at("javascripts/mindmap-generated.js")"></script>
   <script>
-    // To be replaced with a Scala implementation
+    MindMap.setupExploration(@vs.s.getOrElse(100), @vs.x.getOrElse(0), @vs.y.getOrElse(0), function (s, x, y) {
+      return Routes.controllers.Application.show('@id', { s: s, x: x, y: y }).url
+    });
+    /* Hand-written JavaScript
     (function () {
       var state = { s: @vs.s.getOrElse(100), x: @vs.x.getOrElse(0), y: @vs.y.getOrElse(0) };
       var workspace = document.querySelector('.workspace');
@@ -67,6 +71,7 @@
       })();
 
     })();
+    */
   </script>
   @scripts
 }

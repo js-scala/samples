@@ -7,7 +7,6 @@
 @workspace(id, vs) {
   
 } {
-  <script src="@routes.Assets.at("javascripts/mindmap-generated.min.js")"></script>
   <script>
     (function () {
       var nodes = MindMap.showMap(MindMap.buildMap(@Html(play.api.cache.Cache.getOrElse("map_"+id+"_json", 60 * 60)(Json.toJson(map)).toString)));
