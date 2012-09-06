@@ -6,11 +6,11 @@
   <script type="text/javascript">
     Ajax.getJSON('@routes.Application.index()', function (maps) {
       document.body.appendChild(MindMap.listMaps(maps));
-    });
-    document.querySelector('input').addEventListener('keyup', function (e) {
-      if (e.keyCode == 13) {
-        alert('Not yet ^^');
-      }
+      document.querySelector('input').addEventListener('keyup', function (e) {
+        if (e.keyCode == 13) {
+          alert('Not yet ^^');
+        }
+      });
     });
   </script>
 }
