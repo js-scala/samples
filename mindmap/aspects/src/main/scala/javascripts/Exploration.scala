@@ -21,7 +21,7 @@ trait Exploration extends JS with ExtraJS {
     }
 
     // History events
-    window.on(PopState[ViewState]) { (e: Rep[PopStateEvent[ViewState]]) =>
+    window.on(PopState[ViewState]) { e =>
       for (s <- e.state) {
         scale = s.s
         translateX = s.tx
@@ -31,7 +31,7 @@ trait Exploration extends JS with ExtraJS {
     }
 
     // Zoom
-    svg.on(MouseWheel) { (e: Rep[MouseWheelEvent]) =>
+    svg.on(MouseWheel) { e =>
       val newScale = Math.round(scale + e.wheelDeltaY / 16.0)
       if (newScale > 0.0) {
         translateX = Math.round(translateX - e.offsetX * 100.0 / scale + e.offsetX * 100.0 / newScale)
@@ -45,14 +45,14 @@ trait Exploration extends JS with ExtraJS {
     var moving = false
     var x = 0.0
     var y = 0.0
-    window.on(MouseDown) { (e: Rep[MouseEvent]) =>
+    window.on(MouseDown) { e =>
       if (e.target.as[Element].tagName == "svg") {
         moving = true
         x = e.offsetX
         y = e.offsetY
       }
     }
-    window.on(MouseMove) { (e: Rep[MouseEvent]) =>
+    window.on(MouseMove) { e =>
       if (moving) {
         translateX = Math.round(translateX + (e.offsetX - x) * 100.0 / scale)
         translateY = Math.round(translateY + (e.offsetY - y) * 100.0 / scale)
@@ -61,7 +61,7 @@ trait Exploration extends JS with ExtraJS {
         updateTransform(scale, translateX, translateY)
       }
     }
-    window.on(MouseUp) { (_: Rep[MouseEvent]) => moving = false }
+    window.on(MouseUp) { _ => moving = false }
   }
 }
 
@@ -175,30 +175,27 @@ trait JSGenOptionOps extends JSGenEffect {
 
 trait JSDom { this: Base =>
 
-  // Functional dependency
-  class ==>[A, B]
-
   trait EventTarget
   class EventTargetOps(t: Rep[EventTarget]) {
-    def on[A <: EventName, B : Manifest](event: A, capture: Rep[Boolean] = unit(false))(handler: Rep[B] => Rep[Unit])(implicit ev: A ==> B) = eventtarget_on(t, event, capture, handler)
+    def on[A <: EventDef](event: A, capture: Rep[Boolean] = unit(false))(handler: Rep[A#EventType] => Rep[Unit])(implicit m: Manifest[A#EventType]) = eventtarget_on(t, event, capture, handler)
   }
   implicit def repToEventTargetOps(t: Rep[EventTarget]): EventTargetOps = new EventTargetOps(t)
-  def eventtarget_on[A <: EventName, B : Manifest](t: Rep[EventTarget], event: A, capture: Rep[Boolean], handler: Rep[B] => Rep[Unit]): Rep[Unit]
+  def eventtarget_on[A <: EventDef](t: Rep[EventTarget], event: A, capture: Rep[Boolean], handler: Rep[A#EventType] => Rep[Unit])(implicit m: Manifest[A#EventType]): Rep[Unit]
 
   trait Event
   def infix_target(e: Rep[Event]): Rep[EventTarget]
 
-  class EventName(val name: String)
+  class EventDef(val name: String) {
+    type EventType
+  }
 
   trait PopStateEvent[A] extends Event
   def infix_state[A : Manifest](e: Rep[PopStateEvent[A]]): Rep[Option[A]]
 
-  class PopState[A] extends EventName("popstate")
+  class PopState[A] extends EventDef("popstate") { type EventType = PopStateEvent[A] }
   object PopState {
     def apply[A] = new PopState[A]
   }
-
-  implicit def popStateToPopStateEvent[A]: PopState[A] ==> PopStateEvent[A] = new (PopState[A] ==> PopStateEvent[A])
 
   trait MouseEvent extends Event
   def infix_offsetX(e: Rep[MouseEvent]): Rep[Double]
@@ -207,15 +204,10 @@ trait JSDom { this: Base =>
   trait MouseWheelEvent extends MouseEvent
   def infix_wheelDeltaY(e: Rep[MouseWheelEvent]): Rep[Double]
 
-  object MouseWheel extends EventName("mousewheel")
-  object MouseDown extends EventName("mousedown")
-  object MouseMove extends EventName("mousemove")
-  object MouseUp extends EventName("mouseup")
-
-  implicit val mouseWheelToMouseWheelEvent: MouseWheel.type ==> MouseWheelEvent = new (MouseWheel.type ==> MouseWheelEvent)
-  implicit val mouseDownToMouseEvent: MouseDown.type ==> MouseEvent = new (MouseDown.type ==> MouseEvent)
-  implicit val mouseMoveToMouseEvent: MouseMove.type ==> MouseEvent = new (MouseMove.type ==> MouseEvent)
-  implicit val mouseUpToMouseEvent: MouseUp.type ==> MouseEvent = new (MouseUp.type ==> MouseEvent)
+  object MouseWheel extends EventDef("mousewheel") { type EventType = MouseWheelEvent }
+  object MouseDown extends EventDef("mousedown") { type EventType = MouseEvent }
+  object MouseMove extends EventDef("mousemove") { type EventType = MouseEvent }
+  object MouseUp extends EventDef("mouseup") { type EventType = MouseEvent }
 
   trait Window extends EventTarget
 
@@ -244,8 +236,8 @@ trait JSDom { this: Base =>
 }
 
 trait JSDomExp extends JSDom with EffectExp {
-  def eventtarget_on[A <: EventName, B : Manifest](t: Exp[EventTarget], event: A, capture: Exp[Boolean], handler: Exp[B] => Exp[Unit]) = {
-    val e = fresh[B]
+  def eventtarget_on[A <: EventDef](t: Exp[EventTarget], event: A, capture: Exp[Boolean], handler: Exp[A#EventType] => Exp[Unit])(implicit m: Manifest[A#EventType]) = {
+    val e = fresh[A#EventType]
     val block = reifyEffects(handler(e))
     reflectEffect(EventTargetOn(t, event, capture, e, block))
   }
@@ -262,7 +254,7 @@ trait JSDomExp extends JSDom with EffectExp {
   def history_replaceState(h: Exp[History], state: Exp[_], title: Exp[String], url: Exp[String]) = reflectEffect(HistoryReplaceState(h, state, title, url))
   object window extends Exp[Window]
 
-  case class EventTargetOn[A <: EventName, B](t: Exp[EventTarget], event: A, capture: Exp[Boolean], e: Sym[B], handler: Block[Unit]) extends Def[Unit]
+  case class EventTargetOn[A <: EventDef](t: Exp[EventTarget], event: A, capture: Exp[Boolean], e: Sym[A#EventType], handler: Block[Unit]) extends Def[Unit]
   case class EventGetTarget(e: Exp[Event]) extends Def[EventTarget]
   case class PopStateEventState[A : Manifest](e: Exp[PopStateEvent[A]]) extends Def[Option[A]]
   case class MouseEventOffsetX(e: Exp[MouseEvent]) extends Def[Double]
