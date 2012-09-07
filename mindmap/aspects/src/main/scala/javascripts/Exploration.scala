@@ -5,9 +5,9 @@ import js._
 
 // Handle exploration of a mind map (zooming and moving)
 trait Exploration extends JS with ExtraJS {
-  type ViewState = JSLiteral { val s: Double; val tx: Double; val ty: Double }
+  type ViewState = JSLiteral { val s: Int; val tx: Int; val ty: Int }
 
-  def setup(ps: Rep[Double], px: Rep[Double], py: Rep[Double], urlUpdate: Rep[((Double, Double, Double)) => String]) = for {
+  def setup(ps: Rep[Int], px: Rep[Int], py: Rep[Int], urlUpdate: Rep[((Int, Int, Int)) => String]) = for {
     workspace <- document.find(".workspace")
     svg <- document.find("svg")
   } {
@@ -15,8 +15,8 @@ trait Exploration extends JS with ExtraJS {
     var translateX = px
     var translateY = py
     // Update url and svg transformation according to the current view state
-    val updateTransform = fun { (scale: Rep[Double], translateX: Rep[Double], translateY: Rep[Double]) =>
-      workspace.setAttribute("transform", "scale(" + scale / 100.0 + ") translate(" + translateX + " " + translateY + ")")
+    val updateTransform = fun { (scale: Rep[Int], translateX: Rep[Int], translateY: Rep[Int]) =>
+      workspace.setAttribute("transform", "scale(" + scale / 100 + ") translate(" + translateX + " " + translateY + ")")
       history.replaceState(new JSLiteral { val s = scale; val tx = translateX; val ty = translateY }, "", urlUpdate(scale, translateX, translateY))
     }
 
@@ -32,10 +32,10 @@ trait Exploration extends JS with ExtraJS {
 
     // Zoom
     svg.on(MouseWheel) { e =>
-      val newScale = Math.round(scale + e.wheelDeltaY / 16.0)
-      if (newScale > 0.0) {
-        translateX = Math.round(translateX - e.offsetX * 100.0 / scale + e.offsetX * 100.0 / newScale)
-        translateY = Math.round(translateY - e.offsetY * 100.0 / scale + e.offsetY * 100.0 / newScale)
+      val newScale = scale + e.wheelDeltaY / 16
+      if (newScale > 0) {
+        translateX = translateX - e.offsetX * 100 / scale + e.offsetX * 100 / newScale
+        translateY = translateY - e.offsetY * 100 / scale + e.offsetY * 100 / newScale
         scale = newScale
         updateTransform(scale, translateX, translateY)
       }
@@ -43,8 +43,8 @@ trait Exploration extends JS with ExtraJS {
 
     // Move
     var moving = false
-    var x = 0.0
-    var y = 0.0
+    var x = 0
+    var y = 0
     window.on(MouseDown) { e =>
       if (e.target.as[Element].tagName == "svg") {
         moving = true
@@ -54,8 +54,8 @@ trait Exploration extends JS with ExtraJS {
     }
     window.on(MouseMove) { e =>
       if (moving) {
-        translateX = Math.round(translateX + (e.offsetX - x) * 100.0 / scale)
-        translateY = Math.round(translateY + (e.offsetY - y) * 100.0 / scale)
+        translateX = translateX + (e.offsetX - x) * 100 / scale
+        translateY = translateY + (e.offsetY - y) * 100 / scale
         x = e.offsetX
         y = e.offsetY
         updateTransform(scale, translateX, translateY)
@@ -198,11 +198,11 @@ trait JSDom { this: Base =>
   }
 
   trait MouseEvent extends Event
-  def infix_offsetX(e: Rep[MouseEvent]): Rep[Double]
-  def infix_offsetY(e: Rep[MouseEvent]): Rep[Double]
+  def infix_offsetX(e: Rep[MouseEvent]): Rep[Int]
+  def infix_offsetY(e: Rep[MouseEvent]): Rep[Int]
 
   trait MouseWheelEvent extends MouseEvent
-  def infix_wheelDeltaY(e: Rep[MouseWheelEvent]): Rep[Double]
+  def infix_wheelDeltaY(e: Rep[MouseWheelEvent]): Rep[Int]
 
   object MouseWheel extends EventDef("mousewheel") { type EventType = MouseWheelEvent }
   object MouseDown extends EventDef("mousedown") { type EventType = MouseEvent }
@@ -257,9 +257,9 @@ trait JSDomExp extends JSDom with EffectExp {
   case class EventTargetOn[A <: EventDef](t: Exp[EventTarget], event: A, capture: Exp[Boolean], e: Sym[A#EventType], handler: Block[Unit]) extends Def[Unit]
   case class EventGetTarget(e: Exp[Event]) extends Def[EventTarget]
   case class PopStateEventState[A : Manifest](e: Exp[PopStateEvent[A]]) extends Def[Option[A]]
-  case class MouseEventOffsetX(e: Exp[MouseEvent]) extends Def[Double]
-  case class MouseEventOffsetY(e: Exp[MouseEvent]) extends Def[Double]
-  case class MouseWheelEventDeltaY(e: Exp[MouseWheelEvent]) extends Def[Double]
+  case class MouseEventOffsetX(e: Exp[MouseEvent]) extends Def[Int]
+  case class MouseEventOffsetY(e: Exp[MouseEvent]) extends Def[Int]
+  case class MouseWheelEventDeltaY(e: Exp[MouseWheelEvent]) extends Def[Int]
   object WindowDocument extends Exp[Document]
   object WindowHistory extends Exp[History]
   case class DocumentFind(d: Exp[Document], selector: Exp[String]) extends Def[Option[Element]]
@@ -323,8 +323,8 @@ trait JSGenDom extends JSGenEffect {
 }
 
 
-trait ExtraJS extends JSMath with JSDom with OptionOps with ExternApi with JSProxyBase with Casts with LiftVariables with Variables
-trait ExtraJSExp extends JSMathExp with JSDomExp with OptionOpsExp with ExternApiExp with JSProxyExp with CastsCheckedExp
-trait JSGenExtra extends JSGenMath with JSGenDom with JSGenOptionOps with JSGenProxy with GenCastChecked {
+trait ExtraJS extends JSMath with JSDom with OptionOps with ExternApi with JSProxyBase with Casts with LiftVariables with Variables with PrimitiveOps with ImplicitOps
+trait ExtraJSExp extends JSMathExp with JSDomExp with OptionOpsExp with ExternApiExp with JSProxyExp with CastsCheckedExp with PrimitiveOpsExp with ImplicitOpsExp
+trait JSGenExtra extends JSGenMath with JSGenDom with JSGenOptionOps with JSGenProxy with GenCastChecked with forest.JSGenPrimitiveOps {
   val IR: ExtraJSExp
 }
