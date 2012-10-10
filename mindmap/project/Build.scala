@@ -11,18 +11,15 @@ object ApplicationBuild extends Build {
       "batik" % "batik-transcoder" % "1.6-1"
     )
 
-    val core = Project(id = "core", base = file("core"))
-    val aspects = Project(id = "aspects", base = file("aspects")).dependsOn(core)
+    val aspects = Project(id = "aspects", base = file("aspects"))
 
     val main = PlayProject(appName, appVersion, appDependencies, mainLang = SCALA).settings(
 
-      resolvers += Resolver.url("ivy-local", url("file://" + Path.userHome + "/.ivy2/local"))(Resolver.ivyStylePatterns),
-
-      scalacOptions ++= Seq("-deprecation", "-unchecked", "-Xexperimental", "-Yvirtualize"),
+      resolvers += Resolver.file("ivy-local", file(Path.userHome + "/.ivy2/local"))(Resolver.ivyStylePatterns),
 
       routesImport += "controllers.ViewSettings"
 
-    ).dependsOn(core)
+    )
 
     val importers = Project(id = "importers", base = file("importers")).dependsOn(main)
 }
