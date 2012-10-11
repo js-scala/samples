@@ -13,5 +13,5 @@ This sample demonstrates the following features:
 
 # Run the application
 
-* Setup [js-scala](http://github.com/js-scala/js-scala), [build-play20](http://github.com/js-scala/build-play20), [forest](http://github.com/js-scala/forest) ;
-* Run Play! virtualized ;
+* Setup [js-scala](http://github.com/js-scala/js-scala) (including [LMS](http://github.com/js-scala/virtualization-lms-core)) and [forest](http://github.com/js-scala/forest) ;
+* Run `$ play run` (you need Play! 2.1);

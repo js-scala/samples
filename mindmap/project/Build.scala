@@ -15,7 +15,9 @@ object ApplicationBuild extends Build {
 
     val main = PlayProject(appName, appVersion, appDependencies, mainLang = SCALA).settings(
 
-      resolvers += Resolver.file("ivy-local", file(Path.userHome + "/.ivy2/local"))(Resolver.ivyStylePatterns),
+      scalaOrganization := "org.scala-lang.virtualized",
+
+      scalaVersion := "2.10.0-M7",
 
       routesImport += "controllers.ViewSettings"
 
