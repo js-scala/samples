@@ -12,3 +12,7 @@ tmp
 .history
 dist
 *~
+.idea/
+.idea_modules/
+/public/javascripts/cursor_.js
+/public/javascripts/drawing_.js

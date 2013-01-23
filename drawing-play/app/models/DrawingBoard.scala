@@ -1,21 +1,23 @@
 package models
 
 import akka.actor._
-import akka.util.duration._
 
 import play.api._
 import play.api.libs.json._
 import play.api.libs.iteratee._
 import play.api.libs.concurrent._
+import play.api.libs.concurrent.Execution.Implicits._
 
 import akka.util.Timeout
 import akka.pattern.ask
 
 import play.api.Play.current
+import concurrent.Future
+import java.util.concurrent.TimeUnit
 
 object DrawingBoard {
   
-  implicit val timeout = Timeout(1 second)
+  implicit val timeout = Timeout(1, TimeUnit.SECONDS)
 
   val colors =  IndexedSeq("red", "blue", "yellow", "green", "purple", "orange")
   def pickColor(id: Int) = colors(id % colors.length)
@@ -25,8 +27,8 @@ object DrawingBoard {
     drawingBoardSupervisor
   }
 
-  def join(name: String, mode: String):Promise[(Iteratee[JsValue,_],Enumerator[JsValue])] = {
-    (supervisor ? Join(name, mode)).asPromise.map {
+  def join(name: String, mode: String): Future[(Iteratee[JsValue,_],Enumerator[JsValue])] = {
+    (supervisor ? Join(name, mode)).map {
       case Connected(board, id, enumerator) =>
         val iteratee = Iteratee.foreach[JsValue] { event =>
           board ! ClientAction(id, event)
@@ -53,7 +55,7 @@ class DrawingBoard(val name: String) extends Actor {
         case "goto" =>
           Enumerator.imperative[JsValue]()
         case "replay" =>
-          Enumerator.imperative[JsValue](onStart = self ! Playback(id))
+          Enumerator.imperative[JsValue](onStart = () => self ! Playback(id))
       }
       members = members + (id -> channel)
       client ! Connected(self, id, channel)

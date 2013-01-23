@@ -4,14 +4,12 @@ organization := "js-scala"
 
 version := "0.1-SNAPSHOT"
 
-scalaVersion := Option(System.getenv("SCALA_VIRTUALIZED_VERSION")).getOrElse("2.10.0-M1-virtualized")
+scalaOrganization := "org.scala-lang.virtualized"
+
+scalaVersion := "2.10.0"
 
 scalacOptions ++= Seq("-deprecation", "-unchecked", "-Xexperimental", "-Yvirtualize")
 
-resolvers ++= Seq(
-  ScalaToolsSnapshots
-)
-
 libraryDependencies ++= Seq(
-  "EPFL" %% "js-scala" % "0.2-SNAPSHOT"
+  "EPFL" %% "js-scala" % "0.3-SNAPSHOT"
 )
