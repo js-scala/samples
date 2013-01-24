@@ -17,14 +17,14 @@ class ChatRooms extends Actor {
   var channels = List.empty[PushEnumerator[Message]] // readers connections
   var members = List.empty[String] // users chatting
   var chatRoom = ChatRoom(Nil)
-  val chatRoomUi = new NodeRef(views.chatRoom(chatRoom)("root"))
+  val chatRoomUi = new NodeRef(views.chatRoom(chatRoom))
 
   override def receive = {
     case GetAllMessages => {
       sender ! chatRoomUi.cell
     }
     case OpenChannel => {
-      lazy val stream: PushEnumerator[Message] = Enumerator.imperative(onComplete = { self ! CloseChannel(stream) })
+      lazy val stream: PushEnumerator[Message] = Enumerator.imperative(onComplete = { () => self ! CloseChannel(stream) })
       channels = stream :: channels
       sender ! stream
     }

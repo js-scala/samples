@@ -7,3 +7,5 @@ tmp
 dist
 /app/assets/javascripts/views.js
 /app/Chat-generated.scala
+.idea/
+.idea_modules/

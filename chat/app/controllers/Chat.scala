@@ -6,23 +6,25 @@ import play.api.libs.EventSource
 import play.api.libs.json.JsValue
 import play.api.libs.iteratee._
 import play.api.libs.concurrent._
+import play.api.libs.concurrent.Execution.Implicits._
 import play.api.data._
 import play.api.data.Forms._
 
 import akka.util.Timeout
-import akka.util.duration._
 import akka.pattern.ask
 
 import actors.ChatRooms
 import models._
+import models.Protocols._
+import java.util.concurrent.TimeUnit
 
 object Chat extends Controller {
   import ChatRooms.Events._
-  implicit val timeout = Timeout(5.seconds)
+  implicit val timeout = Timeout(5, TimeUnit.SECONDS)
   
   def index = Action { implicit request =>
-    AsyncResult {
-      ((ChatRooms.ref ? GetAllMessages).mapTo[scala.xml.NodeSeq]).asPromise.map { allMessages =>
+    Async {
+      ((ChatRooms.ref ? GetAllMessages).mapTo[scala.xml.NodeSeq]).map { allMessages =>
         Ok(views.html.index(allMessages, authenticatedUser))
       }
     }
@@ -46,8 +48,8 @@ object Chat extends Controller {
   }
 
   def messages = Action { implicit request =>
-    AsyncResult {
-      ((ChatRooms.ref ? OpenChannel).mapTo[Enumerator[Message]]).asPromise.map { message =>
+    Async {
+      ((ChatRooms.ref ? OpenChannel).mapTo[Enumerator[Message]]).map { message =>
         Ok.feed(message &> ToJson[Message] ><> EventSource()).as(EVENT_STREAM)
       }
     }

@@ -4,8 +4,8 @@
   <div class="container">
     @messages
     @maybeUsername match {
-  	  case Some(username) => { @views.connectedUser(username)("root") }
-      case None => { @views.login()("root") }
+  	  case Some(username) => { @views.connectedUser(username) }
+      case None => { @views.login() }
     }
   </div>
   @helper.javascriptRouter("Routes")(

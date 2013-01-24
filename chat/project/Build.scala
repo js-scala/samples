@@ -1,6 +1,6 @@
 import sbt._
 import Keys._
-import PlayProject._
+import play.Project._
 
 object ApplicationBuild extends Build {
 
@@ -8,19 +8,17 @@ object ApplicationBuild extends Build {
     val appVersion      = "1.0-SNAPSHOT"
 
 
-    val appDependencies = Seq(
-      
-    )
-
-    val core = Project(id = "core", base = file("core"))
-    val aspects = Project(id = "aspects", base = file("aspects")).dependsOn(core)
-
-    val main = PlayProject(appName, appVersion, appDependencies, mainLang = SCALA).settings(
+    val main = play.Project(appName, appVersion).settings(
 
       resolvers += Resolver.url("ivy-local", url("file://" + Path.userHome + "/.ivy2/local"))(Resolver.ivyStylePatterns),
 
-      scalacOptions ++= Seq("-deprecation", "-unchecked", "-Xexperimental", "-Yvirtualize")
+      scalacOptions ++= Seq("-deprecation", "-unchecked", "-feature"),
 
-    ).dependsOn(core)
+      libraryDependencies ++= Seq(
+        "js-scala" %% "forest" % "0.3-SNAPSHOT",
+        "org.fusesource.scalate" %% "scalate-core" % "1.6.1"
+      )
+
+    )
 
 }
