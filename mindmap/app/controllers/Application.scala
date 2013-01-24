@@ -2,10 +2,6 @@ package controllers
 
 import play.api._
 import play.api.mvc._
-import play.api.libs.concurrent._
-
-import models._
-import models.repr._
 
 trait Workspace {
   def index: Action[AnyContent]
@@ -32,9 +28,5 @@ object Application extends Controller {
   def show(id: String, vs: ViewSettings) = delegate.show(id, vs)
 
   def update(id: String) = TODO
-
-
-  def AsyncAction(r: => Promise[Result]) = Action(AsyncResult(r))
-  def AsyncAction(f: RequestHeader => Promise[Result]) = Action(r => AsyncResult(f(r)))
 
 }

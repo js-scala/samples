@@ -69,6 +69,7 @@ trait Exploration extends JS with ExtraJS {
 // --- Helper to integrate external API
 
 trait ExternApi { this: Base with JSProxyBase =>
+  import language.{higherKinds, implicitConversions}
   type Extern[A] <: Rep[A]
   implicit def externToApi[A <: AnyRef : Manifest](f: Extern[A]): A = repProxy[A](f) // Han, all function calls will be considered effectful…
 }

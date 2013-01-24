@@ -12,7 +12,7 @@ object CodeGenerator extends App {
   val jsProg2 = new javascripts.Exploration with JSExp with javascripts.ExtraJSExp { context = Nil }
 
   val scalaGen = new ScalaGenForestPkg with ScalaCodeGenPkg with ScalaGenStruct { val IR: prog.type = prog; stream = null }
-  val scalaOut = new java.io.PrintWriter("app/MindMap-generated.scala")
+  val scalaOut = new java.io.PrintWriter("../app/MindMap-generated.scala")
   scalaOut.println("package generated {")
   scalaGen.emitSource(templates.listMaps, "ListMaps", scalaOut)
   scalaGen.emitSource(prog.showMap, "ShowMap", scalaOut)
@@ -49,7 +49,7 @@ object CodeGenerator extends App {
     import IR._
   }
   val jsGen3 = new JSGen with javascripts.JSGenExtra { val IR: jsProg2.type = jsProg2; stream = null }
-  val jsOut = new java.io.PrintWriter("app/assets/javascripts/mindmap-generated.js")
+  val jsOut = new java.io.PrintWriter("../app/assets/javascripts/mindmap-generated.js")
   jsOut.println(";window.MindMap = (function (m) {")
   jsOut.print("m['showMap'] = ")
   jsGen.emitSource(prog.showMap, "", jsOut)

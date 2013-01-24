@@ -2,8 +2,8 @@ package generated {
 /*****************************************
   Emitting Generated Code                  
 *******************************************/
-class ListMaps extends ((scala.collection.immutable.List[C1560200007])=>(scala.xml.Node)) {
-def apply(x0:scala.collection.immutable.List[C1560200007]): scala.xml.Node = {
+class ListMaps extends ((scala.collection.immutable.List[RecordStringRecordStringListRecordStringintintintintListRecordRecordStringintintintintRecordStringintintintint])=>(scala.xml.Node)) {
+def apply(x0:scala.collection.immutable.List[RecordStringRecordStringListRecordStringintintintintListRecordRecordStringintintintintRecordStringintintintint]): scala.xml.Node = {
 val x13 = x0.flatMap { x1 => 
 val x4 = x1.content
 val x5 = x4.name
@@ -34,8 +34,8 @@ x26
 /*****************************************
   Emitting Generated Code                  
 *******************************************/
-class ShowMap extends ((C1421686256)=>(scala.collection.immutable.List[scala.xml.Node])) {
-def apply(x28:C1421686256): scala.collection.immutable.List[scala.xml.Node] = {
+class ShowMap extends ((RecordStringListRecordStringintintintintListRecordRecordStringintintintintRecordStringintintintint)=>(scala.collection.immutable.List[scala.xml.Node])) {
+def apply(x28:RecordStringListRecordStringintintintintListRecordRecordStringintintintintRecordStringintintintint): scala.collection.immutable.List[scala.xml.Node] = {
 val x29 = <defs />
 val x30 = x28.vertices
 val x49 = (0).toString()
@@ -100,9 +100,9 @@ x85
 /*****************************************
   Emitting Generated Code                  
 *******************************************/
-class MindMap extends ((java.lang.String, scala.collection.immutable.List[C979208137], scala.collection.immutable.List[C817727332])=>(C1421686256)) {
-def apply(x87:java.lang.String, x88:scala.collection.immutable.List[C979208137], x89:scala.collection.immutable.List[C817727332]): C1421686256 = {
-val x90 = C1421686256(name = x87, vertices = x88, edges = x89)
+class MindMap extends ((java.lang.String, scala.collection.immutable.List[RecordStringintintintint], scala.collection.immutable.List[RecordRecordStringintintintintRecordStringintintintint])=>(RecordStringListRecordStringintintintintListRecordRecordStringintintintintRecordStringintintintint)) {
+def apply(x87:java.lang.String, x88:scala.collection.immutable.List[RecordStringintintintint], x89:scala.collection.immutable.List[RecordRecordStringintintintintRecordStringintintintint]): RecordStringListRecordStringintintintintListRecordRecordStringintintintintRecordStringintintintint = {
+val x90 = RecordStringListRecordStringintintintintListRecordRecordStringintintintintRecordStringintintintint(name = x87, vertices = x88, edges = x89)
 x90
 }
 }
@@ -112,9 +112,9 @@ x90
 /*****************************************
   Emitting Generated Code                  
 *******************************************/
-class MindMapR extends ((java.lang.String, C1421686256)=>(C1560200007)) {
-def apply(x91:java.lang.String, x92:C1421686256): C1560200007 = {
-val x93 = C1560200007(id = x91, content = x92)
+class MindMapR extends ((java.lang.String, RecordStringListRecordStringintintintintListRecordRecordStringintintintintRecordStringintintintint)=>(RecordStringRecordStringListRecordStringintintintintListRecordRecordStringintintintintRecordStringintintintint)) {
+def apply(x91:java.lang.String, x92:RecordStringListRecordStringintintintintListRecordRecordStringintintintintRecordStringintintintint): RecordStringRecordStringListRecordStringintintintintListRecordRecordStringintintintintRecordStringintintintint = {
+val x93 = RecordStringRecordStringListRecordStringintintintintListRecordRecordStringintintintintRecordStringintintintint(id = x91, content = x92)
 x93
 }
 }
@@ -124,9 +124,9 @@ x93
 /*****************************************
   Emitting Generated Code                  
 *******************************************/
-class Vertex extends ((java.lang.String, Int, Int, Int, Int)=>(C979208137)) {
-def apply(x94:java.lang.String, x95:Int, x96:Int, x97:Int, x98:Int): C979208137 = {
-val x99 = C979208137(height = x98, posy = x96, content = x94, posx = x95, width = x97)
+class Vertex extends ((java.lang.String, Int, Int, Int, Int)=>(RecordStringintintintint)) {
+def apply(x94:java.lang.String, x95:Int, x96:Int, x97:Int, x98:Int): RecordStringintintintint = {
+val x99 = RecordStringintintintint(height = x98, posy = x96, content = x94, posx = x95, width = x97)
 x99
 }
 }
@@ -136,29 +136,29 @@ x99
 /*****************************************
   Emitting Generated Code                  
 *******************************************/
-class Edge extends ((C979208137, C979208137)=>(C817727332)) {
-def apply(x100:C979208137, x101:C979208137): C817727332 = {
-val x102 = C817727332(orig = x100, end = x101)
+class Edge extends ((RecordStringintintintint, RecordStringintintintint)=>(RecordRecordStringintintintintRecordStringintintintint)) {
+def apply(x100:RecordStringintintintint, x101:RecordStringintintintint): RecordRecordStringintintintintRecordStringintintintint = {
+val x102 = RecordRecordStringintintintintRecordStringintintintint(orig = x100, end = x101)
 x102
 }
 }
 /*****************************************
   End of Generated Code                  
 *******************************************/
-case class C1560200007(id: java.lang.String, content: C1421686256)
-case class C1421686256(name: java.lang.String, vertices: scala.collection.immutable.List[C979208137], edges: scala.collection.immutable.List[C817727332])
-case class C979208137(content: java.lang.String, posx: Int, posy: Int, width: Int, height: Int)
-case class C817727332(orig: C979208137, end: C979208137)
+case class RecordRecordStringintintintintRecordStringintintintint(orig: RecordStringintintintint, end: RecordStringintintintint)
+case class RecordStringintintintint(height: Int, posy: Int, content: java.lang.String, posx: Int, width: Int)
+case class RecordStringListRecordStringintintintintListRecordRecordStringintintintintRecordStringintintintint(name: java.lang.String, vertices: scala.collection.immutable.List[RecordStringintintintint], edges: scala.collection.immutable.List[RecordRecordStringintintintintRecordStringintintintint])
+case class RecordStringRecordStringListRecordStringintintintintListRecordRecordStringintintintintRecordStringintintintint(id: java.lang.String, content: RecordStringListRecordStringintintintintListRecordRecordStringintintintintRecordStringintintintint)
 }
 package object models {
   object MindMap extends generated.MindMap
-  type MindMap = generated.C1421686256
+  type MindMap = generated.RecordStringListRecordStringintintintintListRecordRecordStringintintintintRecordStringintintintint
   object MindMapR extends generated.MindMapR
-  type MindMapR = generated.C1560200007
+  type MindMapR = generated.RecordStringRecordStringListRecordStringintintintintListRecordRecordStringintintintintRecordStringintintintint
   object Vertex extends generated.Vertex
-  type Vertex = generated.C979208137
+  type Vertex = generated.RecordStringintintintint
   object Edge extends generated.Edge
-  type Edge = generated.C817727332
+  type Edge = generated.RecordRecordStringintintintintRecordStringintintintint
 }
 package object views {
   object listMaps extends generated.ListMaps

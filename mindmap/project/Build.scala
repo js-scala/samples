@@ -1,6 +1,6 @@
 import sbt._
 import Keys._
-import PlayProject._
+import play.Project._
 
 object ApplicationBuild extends Build {
 
@@ -11,13 +11,7 @@ object ApplicationBuild extends Build {
       "batik" % "batik-transcoder" % "1.6-1"
     )
 
-    val aspects = Project(id = "aspects", base = file("aspects"))
-
-    val main = PlayProject(appName, appVersion, appDependencies, mainLang = SCALA).settings(
-
-      scalaOrganization := "org.scala-lang.virtualized",
-
-      scalaVersion := "2.10.0-M7",
+    val main = play.Project(appName, appVersion, appDependencies).settings(
 
       routesImport += "controllers.ViewSettings"
 
