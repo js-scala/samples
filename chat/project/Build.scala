@@ -15,7 +15,7 @@ object ApplicationBuild extends Build {
       scalacOptions ++= Seq("-deprecation", "-unchecked", "-feature"),
 
       libraryDependencies ++= Seq(
-        "js-scala" %% "forest" % "0.3-SNAPSHOT",
+        "js-scala" %% "forest" % "0.4-SNAPSHOT",
         "org.fusesource.scalate" %% "scalate-core" % "1.6.1"
       )
 

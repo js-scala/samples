@@ -5,7 +5,7 @@ scalaVersion := "2.10.0"
 scalaOrganization := "org.scala-lang.virtualized"
 
 libraryDependencies ++= Seq(
-  "js-scala" %% "forest" % "0.3-SNAPSHOT"
+  "js-scala" %% "forest" % "0.4-SNAPSHOT"
 )
 
 sourceGenerators in Compile <+= (sourceDirectory in Compile, sourceManaged in Compile) map { (sourceDir, targetDir) =>
