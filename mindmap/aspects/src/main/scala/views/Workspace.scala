@@ -4,8 +4,9 @@ import forest._
 import scala.xml.Node
 import scala.virtualization.lms.common._
 import models._
+import scala.js._
 
-trait Workspace extends ForestPkg with ScalaOpsPkg with LiftScala { this: Models =>
+trait Workspace extends JsScala with Forest with LiftJsScala { this: Models =>
 
   def showMap(map: Rep[MindMap]): Rep[List[Node]] = {
     val defs = el('defs)(

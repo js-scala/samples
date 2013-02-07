@@ -10,8 +10,8 @@ sourceGenerators in Compile <+= (sourceDirectory in Compile, sourceManaged in Co
   forest.compiler.Compiler.compile(
       scalax.file.Path(sourceDir / "forest" / "Templates"),
       scalax.file.Path(targetDir),
-      Seq("models._", "scala.xml.Node", "scala.virtualization.lms.common._"),
-      Seq("Models", "ScalaOpsPkg", "LiftScala")
+      Seq("models._", "scala.xml.Node", "scala.virtualization.lms.common._", "scala.js._"),
+      Seq("Models", "LiftJsScala")
   )
   (targetDir / "Templates.scala").get.map(_.getAbsoluteFile)
 }

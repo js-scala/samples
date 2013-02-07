@@ -12,8 +12,8 @@ sourceGenerators in Compile <+= (sourceDirectory in Compile, sourceManaged in Co
   forest.compiler.Compiler.compile(
     scalax.file.Path(sourceDir / "forest" / "Chat"),
     scalax.file.Path(targetDir),
-    Seq("aspects._", "scala.virtualization.lms.common.{LiftAll, Structs, StringOps}"),
-    Seq("Models", "LiftAll", "Structs", "StringOps")
+    Seq("aspects._", "scala.virtualization.lms.common._", "scala.js._"),
+    Seq("Models", "LiftJsScala")
   )
   (targetDir / "Chat.scala").get.map(_.getAbsoluteFile)
 }

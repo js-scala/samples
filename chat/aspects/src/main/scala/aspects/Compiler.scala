@@ -3,11 +3,11 @@ import forest._
 import js._
 
 object Compiler extends App {
-  new aspects.ChatUpdate with ForestPkgExp with TreeManipulationExp with StructExp with StringOpsExp { Ir =>
+  new aspects.ChatUpdate with JsScalaExp with ForestExp with TreeManipulationExp { Ir =>
     context = Nil
     val out = new java.io.PrintWriter("../app/Chat-generated.scala") // That’s very bad.
     out.println("package generated {")
-    val scalaCodegen = new ScalaGenForestPkg with ScalaGenTreeManipulation with ScalaGenStruct with ScalaGenStringOps { val IR: Ir.type = Ir; stream = null }
+    val scalaCodegen = new ScalaGenJsScala with ScalaGenForest with ScalaGenTreeManipulation { val IR: Ir.type = Ir; stream = null }
     val irChat = new ChatUpdate {}
     scalaCodegen.emitSource(irChat.connectedUser, "ConnectedUser", out)
     scalaCodegen.emitSource(irChat.chatRoom, "ChatRoom", out)
@@ -35,7 +35,7 @@ object Compiler extends App {
     out.close()
 
     val outJs = new java.io.PrintWriter("../app/assets/javascripts/views.js") // Very bad, too.
-    val jsCodegen = new JSGenForestPkg with JSGenTreeManipulation with JSGenStruct with JSGenStringOps { val IR: Ir.type = Ir; stream = null }
+    val jsCodegen = new JSGenJsScala with JSGenForest with JSGenTreeManipulation { val IR: Ir.type = Ir; stream = null }
     outJs.println(";(function(){")
     jsCodegen.emitSource(irChat.connectedUser, "connectedUser", outJs)
     jsCodegen.emitSource((_: Exp[Unit]) => irChat.login, "login", outJs)
