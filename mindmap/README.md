@@ -13,4 +13,9 @@ This sample demonstrates the following features:
 # Run the application
 
 * Setup [js-scala](http://github.com/js-scala/js-scala) (including [LMS](http://github.com/TiarkRompf/virtualization-lms-core)) and [forest](http://github.com/js-scala/forest) ;
-* Run `$ sbt run`;
+* Generate aspects code:
+  * `$ cd aspects`
+  * `$ sbt run`
+* Run the application:
+  * `$ cd <mindmap-root-directory>`
+  * `$ sbt run`;

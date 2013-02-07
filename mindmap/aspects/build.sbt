@@ -1,7 +1,7 @@
 name := "mindmap-aspects"
 
 libraryDependencies ++= Seq(
-  "js-scala" %% "forest" % "0.3-SNAPSHOT",
+  "js-scala" %% "forest" % "0.4-SNAPSHOT",
   "EPFL" %% "js-scala" % "0.3-SNAPSHOT",
   "EPFL" %% "lms" % "0.3-SNAPSHOT"
 )

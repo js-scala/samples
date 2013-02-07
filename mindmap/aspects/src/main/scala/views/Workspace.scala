@@ -8,19 +8,17 @@ import models._
 trait Workspace extends ForestPkg with ScalaOpsPkg with LiftScala { this: Models =>
 
   def showMap(map: Rep[MindMap]): Rep[List[Node]] = {
-    val defs = tag('defs)(
+    val defs = el('defs)(
       /*tag("marker", "id"->"arrow", "viewbox"->"0 0 10 10", "orient"->"auto")(
         tag("polyline", "points"->"0,0 20,5 10,30")())*/
     )
 
     val vertices = for (vertex <- map.vertices) yield {
       withNamespace(NS.SVG) { implicit ns =>
-        tag('g, 'class->'vertex, 'transform->("translate("+vertex.posx+","+vertex.posy+")"))(
-          tag('rect, 'width->vertex.width, 'height->vertex.height)(),
-          tag('foreignObject, 'x->0, 'y->0, 'width->vertex.width, 'height->vertex.height)(
-            tag('p, 'style->("height: "+vertex.height+"px;"))(
-              text(vertex.content)
-            )(NS.HTML)
+        el('g, 'class->'vertex, 'transform->("translate("+vertex.posx+","+vertex.posy+")"))(
+          el('rect, 'width->vertex.width, 'height->vertex.height)(),
+          el('foreignObject, 'x->0, 'y->0, 'width->vertex.width, 'height->vertex.height)(
+            el('p, 'style->("height: "+vertex.height+"px;"))(vertex.content)(NS.HTML)
           )
         )
       }
@@ -32,8 +30,8 @@ trait Workspace extends ForestPkg with ScalaOpsPkg with LiftScala { this: Models
       val x2 = edge.end.posx + edge.end.width / 2
       val y2 = edge.end.posy + edge.end.height / 2
       withNamespace(NS.SVG) { implicit ns =>
-        tag('g, 'class->'edge)(
-          tag('line, 'x1->x1, 'y1->y1, 'x2->x2, 'y2->y2)())
+        el('g, 'class->'edge)(
+          el('line, 'x1->x1, 'y1->y1, 'x2->x2, 'y2->y2)())
       }
     }
 
