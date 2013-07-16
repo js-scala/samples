@@ -4,9 +4,20 @@ import forest._
 import scala.xml.Node
 import scala.virtualization.lms.common._
 import models._
-import scala.js._
+import scala.js.language.JsScala
 
-trait Workspace extends JsScala with Forest with LiftJsScala { this: Models =>
+trait Workspace extends JsScala with Forest { this: Models =>
+
+  def itemMap(map: Rep[MindMapR]) =
+    el('li)(
+      el('a, 'href -> ("/" + map.id))(map.content.name)
+    )
+
+  def listMaps(maps: Rep[List[MindMapR]]) =
+    el('div, 'class -> "list-maps")(
+      el('ul)(for (map <- maps) yield itemMap(map)),
+      el('p)("Create a", el('strong)(" new mind map"), ":", el('input, 'type -> 'text, 'placeholder -> "Name")())
+    )
 
   def showMap(map: Rep[MindMap]): Rep[List[Node]] = {
     val defs = el('defs)(

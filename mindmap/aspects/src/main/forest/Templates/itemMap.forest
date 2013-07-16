@@ -1,4 +1,0 @@
-{map: MindMapR}
-li
-  a href="/{map.id}"
-    | {map.content.name}

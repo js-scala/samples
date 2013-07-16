@@ -2,7 +2,7 @@ package javascripts
 
 import models.Models
 import virtualization.lms.common._
-import js._
+import scala.js.language.JS
 
 trait BuildMap extends JS with Structs { this: Models =>
 

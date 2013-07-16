@@ -1,20 +1,21 @@
 
 import forest._
 import virtualization.lms.common._
-import js._
+import scala.js.exp.{JsScalaExp, JSExp}
+import scala.js.gen.js.{GenJsScala => JSGenJsScala, GenJS}
+import scala.js.gen.scala.{GenJsScala => ScalaGenJsScala}
 
 object CodeGenerator extends App {
 
-  trait Prog extends ir.Templates with views.Workspace with models.Models
+  trait Prog extends views.Workspace with models.Models
   val prog = new Prog with JsScalaExp with ForestExp { context = Nil }
-  val templates = new prog.Templates {}
-  val jsProg = new javascripts.BuildMap with models.Models with JSExp with ListOpsExp with StructExp { context = Nil }
+  val jsProg = new javascripts.BuildMap with models.Models with JSExp with StructExp { context = Nil }
   val jsProg2 = new javascripts.Exploration with JSExp with javascripts.ExtraJSExp { context = Nil }
 
   val scalaGen = new ScalaGenJsScala with ScalaGenForest { val IR: prog.type = prog; stream = null }
   val scalaOut = new java.io.PrintWriter("../app/MindMap-generated.scala")
   scalaOut.println("package generated {")
-  scalaGen.emitSource(templates.listMaps, "ListMaps", scalaOut)
+  scalaGen.emitSource(prog.listMaps, "ListMaps", scalaOut)
   scalaGen.emitSource(prog.showMap, "ShowMap", scalaOut)
   scalaGen.emitSource3(prog.MindMap, "MindMap", scalaOut)
   scalaGen.emitSource2(prog.MindMapR, "MindMapR", scalaOut)
@@ -44,17 +45,17 @@ object CodeGenerator extends App {
   scalaOut.close()
 
   val jsGen = new JSGenJsScala with JSGenForest { val IR: prog.type = prog; stream = null }
-  val jsGen2 = new JSGen with JSGenListOps with JSGenStruct {
+  val jsGen2 = new GenJS {
     val IR: jsProg.type = jsProg; stream = null
   }
-  val jsGen3 = new JSGen with javascripts.JSGenExtra { val IR: jsProg2.type = jsProg2; stream = null }
+  val jsGen3 = new GenJS with javascripts.JSGenExtra { val IR: jsProg2.type = jsProg2; stream = null }
   val jsOut = new java.io.PrintWriter("../app/assets/javascripts/mindmap-generated.js")
   jsOut.println(";window.MindMap = (function (m) {")
   jsOut.print("m['showMap'] = ")
   jsGen.emitSource(prog.showMap, "", jsOut)
   jsOut.println(";")
   jsOut.print("m['listMaps'] = ")
-  jsGen.emitSource(templates.listMaps, "", jsOut)
+  jsGen.emitSource(prog.listMaps, "", jsOut)
   jsOut.println(";")
   jsOut.print("m['buildMap'] = ")
   jsGen2.emitSource(jsProg.buildMap, "", jsOut)

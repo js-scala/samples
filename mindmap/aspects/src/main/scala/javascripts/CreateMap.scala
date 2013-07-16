@@ -1,9 +1,5 @@
 package javascripts
 
-import scala.js._
-import models.Models
-import ir.Templates
-
 /*trait CreateMap extends JS with Models with Templates {
 	val main = fun { () =>
     val input = document.find(".form input")

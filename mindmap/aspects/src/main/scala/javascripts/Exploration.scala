@@ -1,11 +1,16 @@
 package javascripts
 
 import virtualization.lms.common._
-import js._
+import scala.js.language._
+import scala.js.language.dom.Dom
+import scala.js.exp._
+import scala.js.exp.dom.DomExp
+import scala.js.gen.js._
+import scala.js.gen.js.dom.GenDom
 
 // Handle exploration of a mind map (zooming and moving)
 trait Exploration extends JS with ExtraJS {
-  type ViewState = JSLiteral { val s: Double; val tx: Double; val ty: Double }
+  type ViewState = Record { val s: Double; val tx: Double; val ty: Double }
 
   def setup(ps: Rep[Double], px: Rep[Double], py: Rep[Double], urlUpdate: Rep[((Double, Double, Double)) => String]) = for {
     workspace <- document.find(".workspace")
@@ -17,7 +22,7 @@ trait Exploration extends JS with ExtraJS {
     // Update url and svg transformation according to the current view state
     val updateTransform = fun { (scale: Rep[Double], translateX: Rep[Double], translateY: Rep[Double]) =>
       workspace.setAttribute("transform", "scale(" + scale / 100.0 + ") translate(" + translateX + " " + translateY + ")")
-      history.replaceState(new JSLiteral { val s = scale; val tx = translateX; val ty = translateY }, "", urlUpdate(scale, translateX, translateY))
+      history.replaceState(new Record { val s = scale; val tx = translateX; val ty = translateY }, "", urlUpdate(scale, translateX, translateY))
     }
 
     // History events
@@ -68,30 +73,30 @@ trait Exploration extends JS with ExtraJS {
 
 // --- Helper to integrate external API
 
-trait ExternApi { this: Base with JSProxyBase =>
+trait ExternApi { this: Base with Proxy =>
   import language.{higherKinds, implicitConversions}
   type Extern[A] <: Rep[A]
   implicit def externToApi[A <: AnyRef : Manifest](f: Extern[A]): A = repProxy[A](f) // Han, all function calls will be considered effectful…
 }
 
-trait ExternApiExp extends ExternApi { this: BaseExp with JSProxyExp =>
+trait ExternApiExp extends ExternApi { this: BaseExp with ProxyExp =>
   abstract class Extern[A : Manifest] extends Exp[A]
 }
 
 // --- Math JavaScript standard API
 
-trait JSMath { this: Base with ExternApi with JSProxyBase =>
+trait JSMath { this: Base with ExternApi with Proxy =>
   trait Math {
     def round(x: Rep[Double]): Rep[Double]
   }
   val Math: Extern[Math]
 }
 
-trait JSMathExp extends JSMath { this: BaseExp with ExternApiExp with JSProxyExp =>
+trait JSMathExp extends JSMath { this: BaseExp with ExternApiExp with ProxyExp =>
   object Math extends Extern[Math]
 }
 
-trait JSGenMath extends JSGenBase {
+trait JSGenMath extends GenBase {
   val IR: BaseExp with JSMath
   import IR._
 
@@ -101,8 +106,8 @@ trait JSGenMath extends JSGenBase {
   }
 }
 
-trait ExtraJS extends JSMath with JSDom with OptionOps with ExternApi with JSProxyBase with Casts with LiftVariables with Variables
-trait ExtraJSExp extends JSMathExp with JSDomExp with OptionOpsExp with ExternApiExp with JSProxyExp with CastsCheckedExp
-trait JSGenExtra extends JSGenMath with JSGenDom with JSGenOptionOps with JSGenProxy with GenCastChecked {
+trait ExtraJS extends JSMath with Dom with OptionOps with ExternApi with Proxy with Casts with LiftVariables with Variables
+trait ExtraJSExp extends JSMathExp with DomExp with OptionOpsExp with ExternApiExp with ProxyExp with CastsCheckedExp
+trait JSGenExtra extends JSGenMath with GenDom with GenOptionOps with GenProxy with GenCastChecked {
   val IR: ExtraJSExp
 }
